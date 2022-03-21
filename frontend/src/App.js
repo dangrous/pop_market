@@ -8,6 +8,7 @@ const App = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [playlist, setPlaylist] = useState(null)
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -16,7 +17,14 @@ const App = () => {
       setUsers(allUsers.data)
     }
 
+    const fetchPlaylist = async () => {
+      const playlist = await axios.get('/api/spotify')
+
+      setPlaylist(playlist)
+    }
+
     fetchUsers()
+    fetchPlaylist()
   }, [])
 
   const buy = async (event) => {
@@ -27,6 +35,10 @@ const App = () => {
     } catch (exception) {
       console.log('couldnt deduct the point')
     }
+  }
+
+  const buySong = async (songId) => {
+    console.log('You bought a song!', songId)
   }
 
   const submit = async (event) => {
@@ -82,6 +94,32 @@ const App = () => {
             </li>
           )
         })}
+      </ul>
+      <ul>
+        {playlist
+          ? playlist.data.tracks.items.map((track, i) => {
+              return (
+                <li key={track.track.id}>
+                  <strong>
+                    #{i + 1}: {track.track.name}
+                  </strong>{' '}
+                  by{' '}
+                  <em>
+                    {track.track.artists.map((artist, i, artists) => {
+                      if (i !== artists.length - 1) {
+                        return artist.name + ', '
+                      } else {
+                        return artist.name
+                      }
+                    })}
+                  </em>
+                  <button onClick={() => buySong(track.track.id)}>
+                    Buy This Song!
+                  </button>
+                </li>
+              )
+            })
+          : null}
       </ul>
     </div>
   )
