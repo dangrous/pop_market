@@ -68,6 +68,20 @@ const App = () => {
     }
   }
 
+  const createUser = async () => {
+    try {
+      const user = await userService.createUser(email, password)
+
+      window.localStorage.setItem('popMarketUser', JSON.stringify(user))
+
+      setUser(user)
+      setEmail('')
+      setPassword('')
+    } catch (exception) {
+      console.log('sorry, something went wrong')
+    }
+  }
+
   const submit = async (event) => {
     event.preventDefault()
     try {
@@ -107,6 +121,8 @@ const App = () => {
             />
           </div>
           <button type='submit'>login</button>
+          OR
+          <button onClick={createUser}>create new user</button>
         </form>
       ) : (
         <div>
