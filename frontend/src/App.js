@@ -37,8 +37,35 @@ const App = () => {
     }
   }
 
-  const buySong = async (songId) => {
-    console.log('You bought a song!', songId)
+  const buySong = async (songId, price) => {
+    console.log('You are buying a song!', songId)
+    try {
+      const updatedUser = await userService.buy(
+        user.token,
+        songId,
+        price,
+        user.email
+      )
+      setUser(updatedUser)
+    } catch (exception) {
+      console.log('that didnt work right')
+    }
+  }
+
+  // Repetitive code, also maybe a good use of Redux. i.e. dispatches seem good.
+  const sellSong = async (songId, price) => {
+    console.log('You are selling a song!', songId)
+    try {
+      const updatedUser = await userService.sell(
+        user.token,
+        songId,
+        price,
+        user.email
+      )
+      setUser(updatedUser)
+    } catch (exception) {
+      console.log('that didnt work right')
+    }
   }
 
   const submit = async (event) => {
@@ -113,9 +140,17 @@ const App = () => {
                       }
                     })}
                   </em>
-                  <button onClick={() => buySong(track.track.id)}>
-                    Buy This Song!
-                  </button>
+                  {user ? (
+                    user.songs.indexOf(track.track.id) === -1 ? (
+                      <button onClick={() => buySong(track.track.id, 100 - i)}>
+                        BUY This Song for {100 - i} Points!
+                      </button>
+                    ) : (
+                      <button onClick={() => sellSong(track.track.id, 100 - i)}>
+                        SELL This Song for {100 - i} Points!
+                      </button>
+                    )
+                  ) : null}
                 </li>
               )
             })

@@ -45,9 +45,12 @@ usersRouter.post('/points', async (request, response) => {
 
   user.save()
 
-  response
-    .status(200)
-    .send({ token: body.token, email: user.email, points: user.points })
+  response.status(200).send({
+    token: body.token,
+    email: user.email,
+    points: user.points,
+    songs: user.songs,
+  })
 })
 
 usersRouter.get('/', async (request, response) => {

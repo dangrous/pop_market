@@ -12,5 +12,27 @@ const deduct = async (token, email, amount) => {
   return response.data
 }
 
-const userService = { deduct }
+const buy = async (token, songId, price, email) => {
+  const toSend = {
+    token,
+    songId,
+    price,
+    email,
+  }
+  const response = await axios.post('/api/trade/buy', toSend)
+  return response.data
+}
+
+const sell = async (token, songId, price, email) => {
+  const toSend = {
+    token,
+    songId,
+    price,
+    email,
+  }
+  const response = await axios.post('/api/trade/sell', toSend)
+  return response.data
+}
+
+const userService = { deduct, buy, sell }
 export default userService

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const schema = new mongoose.Schema({
+const userSchema = mongoose.Schema({
   email: {
     type: String,
     required: true,
@@ -18,9 +18,20 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  trades: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Trade',
+    },
+  ],
+  songs: [
+    {
+      type: String,
+    },
+  ],
 })
 
-schema.set('toJSON', {
+userSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id
@@ -30,4 +41,6 @@ schema.set('toJSON', {
   },
 })
 
-module.exports = mongoose.model('User', schema)
+const User = mongoose.model('User', userSchema)
+
+module.exports = User
