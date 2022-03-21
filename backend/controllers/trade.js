@@ -21,6 +21,7 @@ tradeRouter.post('/buy', async (request, response) => {
     price: body.price,
     date: new Date(),
     user: user._id,
+    action: 'BUY',
   })
 
   const savedTrade = await trade.save()
@@ -50,18 +51,19 @@ tradeRouter.post('/sell', async (request, response) => {
     })
   }
 
-  // TODO Trade needs direction!
   const trade = new Trade({
     song: body.songId,
     price: body.price,
     date: new Date(),
     user: user._id,
+    action: 'SELL',
   })
 
   const savedTrade = await trade.save()
+
   user.trades = user.trades.concat(savedTrade._id)
   user.points = user.points + body.price
-  user.songs = user.songs.map((song) => (song !== body.songId ? song : null))
+  user.songs = user.songs.filter((song) => song !== body.songId)
   await user.save()
 
   response.status(200).send({

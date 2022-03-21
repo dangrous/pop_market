@@ -18,6 +18,10 @@ const tradeSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  action: {
+    type: String,
+    enum: ['BUY', 'SELL'],
+  },
 })
 
 tradeSchema.set('toJSON', {
