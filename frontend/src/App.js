@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { initializeSongs } from './reducers/songReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import SongList from './components/SongList'
@@ -9,6 +9,7 @@ import LoginForm from './components/LoginForm'
 const App = () => {
   const user = useSelector((state) => state.user)
   const dispatch = useDispatch()
+
   useEffect(() => {
     dispatch(initializeSongs())
   }, [dispatch])
