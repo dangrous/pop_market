@@ -17,7 +17,7 @@ const createUser = async (email, password) => {
     email,
     password,
   }
-  const newUser = await axios.post('/api/users/', toSend)
+  await axios.post('/api/users/', toSend)
 
   const response = await axios.post('/api/login', toSend)
 

@@ -9,6 +9,14 @@ const songSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  purchaseDate: {
+    type: Date,
+    required: true,
+  },
+  purchasePrice: {
+    type: Number,
+    required: true,
+  },
 })
 
 tradeSchema.set('toJSON', {
