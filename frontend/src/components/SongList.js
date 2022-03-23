@@ -6,7 +6,6 @@ const SongList = () => {
   const songs = useSelector((state) => state.songs)
   const user = useSelector((state) => state.user)
   const dispatch = useDispatch()
-
   const buySong = async (songId, price) => {
     console.log('You are buying a song!', songId)
     try {

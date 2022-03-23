@@ -22237,7 +22237,7 @@ spotifyRouter.get('/', async (req, res) => {
     uri: 'spotify:playlist:37i9dQZEVXbMDoHDwVN2tF',
   }
 
-  res.send(dummyData.tracks)
+  res.send(dummyData)
 })
 
 module.exports = spotifyRouter

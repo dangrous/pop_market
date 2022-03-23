@@ -14,7 +14,7 @@ const songSlice = createSlice({
 export const initializeSongs = () => {
   return async (dispatch) => {
     const songs = await songService.getAll()
-    dispatch(setSongs(songs.items))
+    dispatch(setSongs(songs.tracks.items))
   }
 }
 

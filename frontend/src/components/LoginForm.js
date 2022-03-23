@@ -25,13 +25,6 @@ const LoginForm = () => {
   const submit = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({
-        email,
-        password,
-      })
-
-      window.localStorage.setItem('popMarketUser', JSON.stringify(user))
-
       dispatch(
         login({
           email,
