@@ -13,8 +13,8 @@ const UserProfile = () => {
       <div>You have {user.points} points available</div>
       <h4>Your Portfolio</h4>
       <ul>
-        {user.songs.map((song) => (
-          <li key={song}>{JSON.stringify(song)}</li>
+        {user.portfolio.map((song) => (
+          <li key={song.id}>{JSON.stringify(song)}</li>
         ))}
       </ul>
     </div>

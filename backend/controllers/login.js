@@ -8,7 +8,7 @@ const config = require('../utils/config')
 loginRouter.post('/', async (request, response) => {
   const body = request.body
 
-  const user = await User.findOne({ email: body.email })
+  const user = await User.findOne({ email: body.email }).populate('trades')
   const passwordCorrect =
     user === null
       ? false
@@ -29,12 +29,34 @@ loginRouter.post('/', async (request, response) => {
     expiresIn: 60 * 60,
   })
 
+  const ownedIds = []
+  const soldIds = []
+  const songs = []
+  let songWorth = 0
+
+  user.trades.reverse()
+
+  user.trades.forEach((trade) => {
+    if (!ownedIds.includes(trade.song) && !soldIds.includes(trade.song)) {
+      if (trade.action === 'BUY') {
+        ownedIds.push(trade.song)
+        songs.push({
+          id: trade.song,
+          purchasePrice: trade.price,
+          currentPrice: 100, // But actually make this real?
+        })
+      } else {
+        soldIds.push(trade.song)
+      }
+    }
+  })
+
   response.status(200).send({
     token,
     email: user.email,
     points: user.points,
-    songs: user.songs,
-    trades: user.trades,
+    netWorth: 10,
+    portfolio: songs,
   })
 })
 

@@ -59,7 +59,9 @@ const SongList = () => {
                     })}
                   </em>
                   {user ? (
-                    user.songs.indexOf(song.track.id) === -1 ? (
+                    user.portfolio.findIndex(
+                      (holding) => holding.id === song.track.id
+                    ) === -1 ? (
                       <button onClick={() => buySong(song.track.id, 100 - i)}>
                         BUY This Song for {100 - i} Points!
                       </button>
