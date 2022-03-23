@@ -2,24 +2,24 @@ const mongoose = require('mongoose')
 
 const songSchema = new mongoose.Schema({
   artist: {
-    type: String,
+    type: [String],
     required: true,
   },
   title: {
+    type: String,
+    required: true,
+  },
+  currentPrice: {
     type: Number,
     required: true,
   },
-  purchaseDate: {
-    type: Date,
-    required: true,
-  },
-  purchasePrice: {
-    type: Number,
+  spotifyId: {
+    type: String,
     required: true,
   },
 })
 
-tradeSchema.set('toJSON', {
+songSchema.set('toJSON', {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString()
     delete returnedObject._id

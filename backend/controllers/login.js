@@ -4,6 +4,35 @@ const loginRouter = require('express').Router()
 const User = require('../models/user')
 const logger = require('../utils/logger')
 const config = require('../utils/config')
+const Song = require('../models/song')
+
+const createSongList = async (trades) => {
+  const ownedIds = []
+  const soldIds = []
+  const songs = []
+
+  trades.reverse()
+
+  trades.forEach(async (trade) => {
+    if (!ownedIds.includes(trade.song) && !soldIds.includes(trade.song)) {
+      if (trade.action === 'BUY') {
+        ownedIds.push(trade.song)
+
+        // let song = await Song.findOne({ spotifyId: trade.song })
+
+        songs.push({
+          id: trade.song,
+          purchasePrice: trade.price,
+          currentPrice: 45, // TODO NEED TO WORK ON ASYNC TO MAKE THIS REAL
+        })
+      } else {
+        soldIds.push(trade.song)
+      }
+    }
+  })
+
+  return songs
+}
 
 loginRouter.post('/', async (request, response) => {
   const body = request.body
@@ -29,27 +58,8 @@ loginRouter.post('/', async (request, response) => {
     expiresIn: 60 * 60,
   })
 
-  const ownedIds = []
-  const soldIds = []
-  const songs = []
-  let songWorth = 0
-
-  user.trades.reverse()
-
-  user.trades.forEach((trade) => {
-    if (!ownedIds.includes(trade.song) && !soldIds.includes(trade.song)) {
-      if (trade.action === 'BUY') {
-        ownedIds.push(trade.song)
-        songs.push({
-          id: trade.song,
-          purchasePrice: trade.price,
-          currentPrice: 100, // But actually make this real?
-        })
-      } else {
-        soldIds.push(trade.song)
-      }
-    }
-  })
+  // TODO look at this - https://gist.github.com/Atinux/fd2bcce63e44a7d3addddc166ce93fb2
+  const songs = await createSongList(user.trades)
 
   response.status(200).send({
     token,

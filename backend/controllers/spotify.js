@@ -1,8 +1,7 @@
 const spotifyRouter = require('express').Router()
 const config = require('../utils/config')
 const axios = require('axios')
-const qs = require('qs')
-const { reset } = require('nodemon')
+const Song = require('../models/song')
 
 const auth_token = Buffer.from(
   `${config.CLIENT_ID}:${config.CLIENT_SECRET}`,
@@ -22235,6 +22234,29 @@ spotifyRouter.get('/', async (req, res) => {
     },
     type: 'playlist',
     uri: 'spotify:playlist:37i9dQZEVXbMDoHDwVN2tF',
+  }
+
+  for (let i = 0; i < dummyData.tracks.items.length; i++) {
+    let currentSong = dummyData.tracks.items[i]
+
+    let song = await Song.findOne({ spotifyId: currentSong.track.id })
+
+    if (!song) {
+      song = new Song({
+        artist: [], // TODO
+        title: currentSong.track.name,
+        currentPrice: 100 - i,
+        spotifyId: currentSong.track.id,
+      })
+
+      await song.save()
+    } else {
+      if (song.currentPrice != 100 - i) {
+        song.currentPrice = 100 - i
+
+        await song.save()
+      }
+    }
   }
 
   res.send(dummyData)
