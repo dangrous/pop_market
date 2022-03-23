@@ -24,11 +24,10 @@ const userSchema = mongoose.Schema({
       ref: 'Trade',
     },
   ],
-  songs: [
-    {
-      type: String,
-    },
-  ],
+  songs: {
+    type: [String],
+    required: true,
+  },
 })
 
 userSchema.set('toJSON', {

@@ -50,6 +50,7 @@ usersRouter.post('/points', async (request, response) => {
     email: user.email,
     points: user.points,
     songs: user.songs,
+    trades: user.trades,
   })
 })
 
