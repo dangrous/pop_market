@@ -2,6 +2,7 @@ const tradeRouter = require('express').Router()
 const Trade = require('../models/trade')
 const User = require('../models/user')
 const logger = require('../utils/logger')
+const helper = require('../utils/helpers')
 
 tradeRouter.post('/buy', async (request, response) => {
   logger.info('attempting to buy a song')
@@ -30,11 +31,18 @@ tradeRouter.post('/buy', async (request, response) => {
   user.songs = user.songs.concat(body.songId)
   await user.save()
 
+  // ! Don't do this
+  const updatedUser = await User.findOne({ email: body.email }).populate(
+    'trades'
+  )
+
+  const songs = await helper.createPortfolio(updatedUser.trades)
+
   response.status(200).send({
     token: body.token,
     email: user.email,
     points: user.points,
-    songs: user.songs,
+    portfolio: songs,
   })
 })
 
@@ -66,11 +74,18 @@ tradeRouter.post('/sell', async (request, response) => {
   user.songs = user.songs.filter((song) => song !== body.songId)
   await user.save()
 
+  // ! Don't do this
+  const updatedUser = await User.findOne({ email: body.email }).populate(
+    'trades'
+  )
+
+  const songs = await helper.createPortfolio(updatedUser.trades)
+
   response.status(200).send({
     token: body.token,
     email: user.email,
     points: user.points,
-    songs: user.songs,
+    portfolio: songs,
   })
 })
 

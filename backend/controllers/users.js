@@ -49,7 +49,7 @@ usersRouter.post('/points', async (request, response) => {
     token: body.token,
     email: user.email,
     points: user.points,
-    songs: user.songs,
+    portfolio: user.songs,
     trades: user.trades,
   })
 })

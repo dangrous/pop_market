@@ -2,7 +2,6 @@ import axios from 'axios'
 const baseUrl = '/api/users/points'
 
 const deduct = async (token, email, amount) => {
-  console.log('got to the user service')
   const toSend = {
     token,
     email,
