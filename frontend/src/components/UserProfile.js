@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 const OwnedSong = ({ song }) => {
   const profit = song.currentPrice - song.purchasePrice
   return (
-    <li key={song.id}>
+    <li>
       {song.title} by{' '}
       {song.artist.map((artist, i, artists) => {
         if (i !== artists.length - 1) {
@@ -38,7 +38,7 @@ const UserProfile = () => {
       <h4>Your Portfolio - Worth {portfolioValue} Points</h4>
       <ul>
         {user.portfolio.map((song) => (
-          <OwnedSong song={song} />
+          <OwnedSong key={song.id} song={song} />
         ))}
       </ul>
     </div>

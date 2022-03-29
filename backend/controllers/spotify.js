@@ -74,7 +74,7 @@ spotifyRouter.get('/', async (req, res) => {
 
       if (!song) {
         song = new Song({
-          artist: currentSong.track.artists, // TODO
+          artist: currentSong.track.artists,
           title: currentSong.track.name,
           currentPrice: 100 - i,
           spotifyId: currentSong.track.id,

@@ -17,7 +17,7 @@ const SongList = () => {
       )
       dispatch(setUser(updatedUser))
     } catch (exception) {
-      console.log('that didnt work right')
+      console.log('something went wrong')
     }
   }
 
@@ -62,7 +62,10 @@ const SongList = () => {
                     user.portfolio.findIndex(
                       (holding) => holding.id === song.track.id
                     ) === -1 ? (
-                      <button onClick={() => buySong(song.track.id, 100 - i)}>
+                      <button
+                        onClick={() => buySong(song.track.id, 100 - i)}
+                        disabled={user.points - (100 - i) < 0}
+                      >
                         BUY This Song for {100 - i} Points!
                       </button>
                     ) : (

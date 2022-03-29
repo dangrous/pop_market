@@ -17,6 +17,12 @@ tradeRouter.post('/buy', async (request, response) => {
     })
   }
 
+  if (body.price > user.points) {
+    return response.status(400).json({
+      error: 'you do not have sufficient points',
+    })
+  }
+
   const trade = new Trade({
     song: body.songId,
     price: body.price,
