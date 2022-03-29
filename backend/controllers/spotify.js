@@ -38,7 +38,7 @@ spotifyRouter.get('/', async (req, res) => {
         },
       })
       .catch((error) => {
-        console.log(error)
+        logger.error(error)
       })
 
     const token = response.data.access_token
@@ -53,7 +53,7 @@ spotifyRouter.get('/', async (req, res) => {
       }
     )
 
-    //const playlistData = dummyData.dummyData
+    // const playlistData = dummyData.dummyData
     const playlistData = playlist.data
 
     if (!cache) {
