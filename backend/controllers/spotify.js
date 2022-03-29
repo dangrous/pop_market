@@ -53,6 +53,7 @@ spotifyRouter.get('/', async (req, res) => {
       }
     )
 
+    //const playlistData = dummyData.dummyData
     const playlistData = playlist.data
 
     if (!cache) {
