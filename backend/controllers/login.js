@@ -31,7 +31,6 @@ loginRouter.post('/', async (request, response) => {
     expiresIn: 60 * 60,
   })
 
-  // TODO look at this - https://gist.github.com/Atinux/fd2bcce63e44a7d3addddc166ce93fb2
   const songs = await helper.createPortfolio(user.trades)
 
   response.status(200).send({

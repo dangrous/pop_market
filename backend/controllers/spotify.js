@@ -55,7 +55,6 @@ spotifyRouter.get('/', async (req, res) => {
 
     const playlistData = playlist.data
 
-    // TODO update cache with playlistData and new Date
     if (!cache) {
       cache = new Cache({
         date: new Date(),
@@ -75,7 +74,7 @@ spotifyRouter.get('/', async (req, res) => {
 
       if (!song) {
         song = new Song({
-          artist: [], // TODO
+          artist: currentSong.track.artists, // TODO
           title: currentSong.track.name,
           currentPrice: 100 - i,
           spotifyId: currentSong.track.id,
@@ -96,63 +95,6 @@ spotifyRouter.get('/', async (req, res) => {
     logger.info('going to use cached value')
     res.send(cache.playlist)
   }
-
-  // const token_url = 'https://accounts.spotify.com/api/token'
-
-  // const response = await axios
-  //   .post('https://accounts.spotify.com/api/token', null, {
-  //     params: {
-  //       client_id: config.CLIENT_ID,
-  //       client_secret: config.CLIENT_SECRET,
-  //       grant_type: 'client_credentials',
-  //     },
-  //     headers: {
-  //       Accept: 'application/json',
-  //       'Content-Type': 'application/x-www-form-urlencoded',
-  //     },
-  //   })
-  //   .catch((error) => {
-  //     console.log(error)
-  //   })
-
-  // const token = response.data.access_token
-
-  // const playlist = await axios.get(
-  //   'https://api.spotify.com/v1/playlists/37i9dQZEVXbMDoHDwVN2tF',
-  //   {
-  //     headers: {
-  //       Authorization: 'Bearer ' + token,
-  //       'Content-Type': 'application/json',
-  //     },
-  //   }
-  // )
-
-  // res.send(playlist.data)
-
-  // for (let i = 0; i < dummyData.dummyData.tracks.items.length; i++) {
-  //   let currentSong = dummyData.dummyData.tracks.items[i]
-
-  //   let song = await Song.findOne({ spotifyId: currentSong.track.id })
-
-  //   if (!song) {
-  //     song = new Song({
-  //       artist: [], // TODO
-  //       title: currentSong.track.name,
-  //       currentPrice: 100 - i,
-  //       spotifyId: currentSong.track.id,
-  //     })
-
-  //     await song.save()
-  //   } else {
-  //     if (song.currentPrice != 100 - i) {
-  //       song.currentPrice = 100 - i
-
-  //       await song.save()
-  //     }
-  //   }
-  // }
-
-  // res.send(dummyData)
 })
 
 module.exports = spotifyRouter

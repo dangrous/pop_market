@@ -23,6 +23,8 @@ const createPortfolio = async (trades) => {
         console.log(song)
 
         songs.push({
+          title: song.title,
+          artist: song.artist,
           id: trade.song,
           purchasePrice: trade.price,
           currentPrice: song.currentPrice,
