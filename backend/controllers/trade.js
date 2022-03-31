@@ -1,17 +1,15 @@
 const tradeRouter = require('express').Router()
 const Trade = require('../models/trade')
+const Song = require('../models/song')
 const User = require('../models/user')
-const logger = require('../utils/logger')
-const helper = require('../utils/helpers')
 
-tradeRouter.post('/buy', async (request, response) => {
-  logger.info('attempting to buy a song')
+tradeRouter.post('/buy', async (req, res) => {
+  const body = req.body
 
-  const body = request.body
+  // TODO Verify user (token? cookie?)
+  // TODO (This might modify below code as well)
 
   const user = await User.findOne({ email: body.email })
-
-  logger.info(user)
 
   if (!user) {
     return response.status(401).json({
@@ -19,45 +17,53 @@ tradeRouter.post('/buy', async (request, response) => {
     })
   }
 
-  if (body.price > user.points) {
+  const song = await Song.findOne({ spotifyId: body.songId })
+
+  if (!song) {
+    return response.status(400).json({
+      error: 'could not find the song',
+    })
+  }
+
+  const price = song.currentPrice
+
+  if (price > user.points) {
     return response.status(400).json({
       error: 'you do not have sufficient points',
     })
   }
 
   const trade = new Trade({
-    song: body.songId,
-    price: body.price,
+    song: song._id,
+    price,
     date: new Date(),
     user: user._id,
     action: 'BUY',
   })
 
-  const savedTrade = await trade.save()
-  user.trades = user.trades.concat(savedTrade._id)
-  user.points = user.points - body.price
-  user.songs = user.songs.concat(body.songId)
+  await trade.save()
+
+  user.trades = user.trades.concat(trade._id)
+  user.points = user.points - price
+  user.songs = user.songs.concat({
+    song: song._id,
+    purchasePrice: price,
+  })
   await user.save()
 
-  // ! Don't do this
-  const updatedUser = await User.findOne({ email: body.email }).populate(
-    'trades'
-  )
-
-  const songs = await helper.createPortfolio(updatedUser.trades)
-
-  response.status(200).send({
-    token: body.token,
-    email: user.email,
-    points: user.points,
-    portfolio: songs,
+  await user.populate({
+    path: 'songs',
+    populate: { path: 'song' },
   })
+
+  res.status(200).send(user)
 })
 
-tradeRouter.post('/sell', async (request, response) => {
-  logger.info('attempting to sell a song')
+tradeRouter.post('/sell', async (req, res) => {
+  const body = req.body
 
-  const body = request.body
+  // TODO Verify user (token? cookie?)
+  // TODO (This might modify below code as well)
 
   const user = await User.findOne({ email: body.email })
 
@@ -67,34 +73,21 @@ tradeRouter.post('/sell', async (request, response) => {
     })
   }
 
-  const trade = new Trade({
-    song: body.songId,
-    price: body.price,
-    date: new Date(),
-    user: user._id,
-    action: 'SELL',
-  })
+  const song = await Song.findById(body.songId)
 
-  const savedTrade = await trade.save()
+  if (!song) {
+    return response.status(400).json({
+      error: 'could not find the song',
+    })
+  }
 
-  user.trades = user.trades.concat(savedTrade._id)
-  user.points = user.points + body.price
-  user.songs = user.songs.filter((song) => song !== body.songId)
-  await user.save()
+  // ! Will need to make sure this gets updated if a song is owned and wasn't picked up
+  // ! in the last playlist update
+  const price = song.currentPrice
 
-  // ! Don't do this
-  const updatedUser = await User.findOne({ email: body.email }).populate(
-    'trades'
-  )
-
-  const songs = await helper.createPortfolio(updatedUser.trades)
-
-  response.status(200).send({
-    token: body.token,
-    email: user.email,
-    points: user.points,
-    portfolio: songs,
-  })
+  // TODO Confirm user owns song
+  // TODO Execute trade (create and save trade object)
+  // TODO Update user (portfolio, points, trades, net worth)
 })
 
 module.exports = tradeRouter

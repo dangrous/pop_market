@@ -2,23 +2,23 @@ import { useDispatch, useSelector } from 'react-redux'
 import { logoutUser } from '../reducers/userReducer'
 
 const OwnedSong = ({ song }) => {
-  const profit = song.currentPrice - song.purchasePrice
+  const profit = song.song.currentPrice - song.purchasePrice
 
   const percentage =
-    (song.currentPrice - song.purchasePrice) / song.purchasePrice
+    (song.song.currentPrice - song.purchasePrice) / song.purchasePrice
 
   return (
     <li>
-      {song.title} by{' '}
-      {song.artist.map((artist, i, artists) => {
+      {song.song.title} by{' '}
+      {song.song.artist.map((artist, i, artists) => {
         if (i !== artists.length - 1) {
           return artist.name + ', '
         } else {
           return artist.name
         }
       })}
-      - Current Value: {song.currentPrice} - Purchased at: {song.purchasePrice}{' '}
-      - Profit: {profit} or{' '}
+      - Current Value: {song.song.currentPrice} - Purchased at:{' '}
+      {song.purchasePrice} - Profit: {profit} or{' '}
       {percentage.toLocaleString('en-US', {
         style: 'percent',
       })}
@@ -36,8 +36,8 @@ const UserProfile = () => {
 
   console.log(JSON.stringify(user))
 
-  const portfolioValue = user.portfolio.reduce(
-    (prev, song) => prev + song.currentPrice,
+  const portfolioValue = user.songs.reduce(
+    (prev, song) => prev + song.song.currentPrice,
     0
   )
 
@@ -52,7 +52,7 @@ const UserProfile = () => {
       <div>You have {user.points} points available to spend</div>
       <h4>Your Portfolio - Worth {portfolioValue} Points</h4>
       <ul>
-        {user.portfolio.map((song) => (
+        {user.songs.map((song) => (
           <OwnedSong key={song.id} song={song} />
         ))}
       </ul>

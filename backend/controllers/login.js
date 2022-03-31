@@ -63,7 +63,9 @@ const calculateNetWorth = (songs, points) => {
   let worth = points
 
   for (let song of songs) {
-    worth += song.currentPrice
+    // ! This is probably where i need to update curprice
+    // ! if it's no longer in the list (probably need updateDate)
+    worth += song.song.currentPrice
   }
 
   return worth
@@ -76,24 +78,21 @@ loginRouter.post('/tryspotify', async (req, res) => {
     logger.error('found user!')
     const user = await User.findOne({
       email: req.cookies.popMarketSession,
-    }).populate('trades')
+    }).populate({
+      path: 'songs',
+      populate: { path: 'song' },
+    })
 
     if (!user) {
       res.send(null)
     } else {
-      const songs = await helper.createPortfolio(user.trades)
+      // const songs = await helper.createPortfolio(user.trades)
 
-      const netWorth = calculateNetWorth(songs, user.points)
+      user.netWorth = calculateNetWorth(user.songs, user.points)
 
-      res.status(200).send({
-        token: 'asdas',
-        email: user.email,
-        points: user.points,
-        netWorth: 10,
-        portfolio: songs,
-        display_name: user.display_name,
-        netWorth,
-      })
+      await user.save()
+
+      res.status(200).send(user)
     }
   }
 

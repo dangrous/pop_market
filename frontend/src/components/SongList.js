@@ -59,7 +59,7 @@ const SongList = () => {
                     })}
                   </em>
                   {user ? (
-                    user.portfolio.findIndex(
+                    user.songs.findIndex(
                       (holding) => holding.id === song.track.id
                     ) === -1 ? (
                       <button
