@@ -9,6 +9,8 @@ const helper = require('../utils/helpers')
 const axios = require('axios')
 
 loginRouter.post('/', async (request, response) => {
+  console.log('in regular route')
+  console.log(JSON.stringify(request.cookies.popMarketSession))
   const body = request.body
 
   const user = await User.findOne({ email: body.email }).populate('trades')
@@ -49,6 +51,42 @@ loginRouter.get('/oauth', (req, res) => {
   )
 })
 
+loginRouter.post('/logout', async (req, res) => {
+  res.cookie('popMarketSession', null, {
+    httpOnly: true,
+    expires: new Date(0),
+  })
+  res.redirect('/')
+})
+
+loginRouter.post('/tryspotify', async (req, res) => {
+  if (!req.cookies || !req.cookies.popMarketSession) {
+    res.send(null)
+  } else {
+    const user = await User.findOne({ email: req.cookies.popMarketSession })
+
+    if (!user) {
+      res.send(null)
+    } else {
+      const songs = await helper.createPortfolio(user.trades)
+
+      res.status(200).send({
+        token: 'asdas',
+        email: user.email,
+        points: user.points,
+        netWorth: 10,
+        portfolio: songs,
+        display_name: user.display_name,
+      })
+    }
+  }
+
+  // console.log(req.cookies)
+  // if (!request.cookies) {
+  //   logger.error('no cookies provided')
+  // }
+})
+
 loginRouter.get('/callback', async (req, res) => {
   const code = req.query.code || null
 
@@ -73,6 +111,8 @@ loginRouter.get('/callback', async (req, res) => {
       logger.error(error)
     })
 
+  console.log(response.data)
+
   const token = response.data.access_token
 
   const user = await axios.get('https://api.spotify.com/v1/me', {
@@ -82,7 +122,27 @@ loginRouter.get('/callback', async (req, res) => {
     },
   })
 
-  res.send(user.data)
+  console.log(user.data)
+
+  const existingUser = await User.findOne({ email: user.data.id })
+
+  if (!existingUser) {
+    const newUser = new User({
+      email: user.data.id,
+      points: 1000,
+      createDate: new Date(),
+      passwordHash: 'poop',
+      display_name: user.data.display_name,
+    })
+
+    const savedUser = await newUser.save()
+  }
+
+  res.cookie('popMarketSession', user.data.id, {
+    httpOnly: true,
+    maxAge: 360000,
+  })
+  res.redirect('/')
 })
 
 module.exports = loginRouter

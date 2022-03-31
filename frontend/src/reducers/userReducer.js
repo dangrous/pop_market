@@ -8,6 +8,9 @@ const userSlice = createSlice({
     setUser(state, action) {
       return action.payload
     },
+    removeUser(state, action) {
+      return null
+    },
   },
 })
 
@@ -19,5 +22,19 @@ export const login = (credentials) => {
   }
 }
 
-export const { setUser } = userSlice.actions
+export const trySpotifyUser = () => {
+  return async (dispatch) => {
+    const user = await loginService.trySpotify()
+    if (user) dispatch(setUser(user))
+  }
+}
+
+export const logoutUser = () => {
+  return async (dispatch) => {
+    dispatch(removeUser())
+    await loginService.logout()
+  }
+}
+
+export const { setUser, removeUser } = userSlice.actions
 export default userSlice.reducer

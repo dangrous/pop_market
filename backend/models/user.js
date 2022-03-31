@@ -18,6 +18,9 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  display_name: {
+    type: String,
+  },
   trades: [
     {
       type: mongoose.Schema.Types.ObjectId,

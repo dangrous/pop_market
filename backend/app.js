@@ -9,6 +9,7 @@ const tradeRouter = require('./controllers/trade')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
+const cookieParser = require('cookie-parser')
 
 logger.info('connecting to', config.MONGODB_URI)
 
@@ -25,6 +26,7 @@ app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
 app.use(middleware.requestLogger)
+app.use(cookieParser())
 
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)

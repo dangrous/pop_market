@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
-import loginService from '../services/login'
 import userService from '../services/user'
 import { login } from '../reducers/userReducer'
 
@@ -38,6 +37,10 @@ const LoginForm = () => {
     }
   }
 
+  // ! This will not work in production, will need to adjust to relative but for
+  // ! some reason I can't get it to work in dev otherwise.
+  const oauthRequestUrl = 'http://localhost:3001/api/login/oauth'
+
   return (
     <div>
       <h3>Login or create an account</h3>
@@ -60,6 +63,7 @@ const LoginForm = () => {
         <button type='submit'>login</button>
         OR
         <button onClick={createUser}>create new user</button>
+        OR <a href={oauthRequestUrl}>Login with Spotify</a>
       </form>
     </div>
   )

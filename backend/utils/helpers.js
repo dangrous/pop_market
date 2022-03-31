@@ -20,8 +20,6 @@ const createPortfolio = async (trades) => {
 
         let song = await Song.findOne({ spotifyId: trade.song })
 
-        console.log(song)
-
         songs.push({
           title: song.title,
           artist: song.artist,

@@ -1,4 +1,5 @@
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { logoutUser } from '../reducers/userReducer'
 
 const OwnedSong = ({ song }) => {
   const profit = song.currentPrice - song.purchasePrice
@@ -20,6 +21,7 @@ const OwnedSong = ({ song }) => {
 
 const UserProfile = () => {
   const user = useSelector((state) => state.user)
+  const dispatch = useDispatch()
 
   if (!user) {
     return null
@@ -30,9 +32,13 @@ const UserProfile = () => {
     0
   )
 
+  const logout = () => {
+    dispatch(logoutUser())
+  }
+
   return (
     <div>
-      <h3>{user.email}'s Profile</h3>
+      <h3>{user.display_name}'s Profile</h3>
       <div>Total Net Worth - {user.points + portfolioValue}</div>
       <div>You have {user.points} points available to spend</div>
       <h4>Your Portfolio - Worth {portfolioValue} Points</h4>
@@ -41,6 +47,7 @@ const UserProfile = () => {
           <OwnedSong key={song.id} song={song} />
         ))}
       </ul>
+      <button onClick={logout}>log out</button>
     </div>
   )
 }
