@@ -11,6 +11,8 @@ tradeRouter.post('/buy', async (request, response) => {
 
   const user = await User.findOne({ email: body.email })
 
+  logger.info(user)
+
   if (!user) {
     return response.status(401).json({
       error: 'could not find the user',

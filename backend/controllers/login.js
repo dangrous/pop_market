@@ -59,16 +59,31 @@ loginRouter.post('/logout', async (req, res) => {
   res.redirect('/')
 })
 
+const calculateNetWorth = (songs, points) => {
+  let worth = points
+
+  for (let song of songs) {
+    worth += song.currentPrice
+  }
+
+  return worth
+}
+
 loginRouter.post('/tryspotify', async (req, res) => {
   if (!req.cookies || !req.cookies.popMarketSession) {
     res.send(null)
   } else {
-    const user = await User.findOne({ email: req.cookies.popMarketSession })
+    logger.error('found user!')
+    const user = await User.findOne({
+      email: req.cookies.popMarketSession,
+    }).populate('trades')
 
     if (!user) {
       res.send(null)
     } else {
       const songs = await helper.createPortfolio(user.trades)
+
+      const netWorth = calculateNetWorth(songs, user.points)
 
       res.status(200).send({
         token: 'asdas',
@@ -77,6 +92,7 @@ loginRouter.post('/tryspotify', async (req, res) => {
         netWorth: 10,
         portfolio: songs,
         display_name: user.display_name,
+        netWorth,
       })
     }
   }
@@ -99,6 +115,7 @@ loginRouter.get('/callback', async (req, res) => {
     .post('https://accounts.spotify.com/api/token', null, {
       params: {
         code: code,
+        // ! This will need to not be hardcoded for deployment. Not quite sure how to do that.
         redirect_uri: 'http://localhost:3001/api/login/callback',
         grant_type: 'authorization_code',
       },
@@ -142,6 +159,7 @@ loginRouter.get('/callback', async (req, res) => {
     httpOnly: true,
     maxAge: 360000,
   })
+  // ! This redirects to the built version which is not great for testing. How fix?
   res.redirect('/')
 })
 

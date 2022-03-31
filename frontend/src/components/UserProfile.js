@@ -3,6 +3,10 @@ import { logoutUser } from '../reducers/userReducer'
 
 const OwnedSong = ({ song }) => {
   const profit = song.currentPrice - song.purchasePrice
+
+  const percentage =
+    (song.currentPrice - song.purchasePrice) / song.purchasePrice
+
   return (
     <li>
       {song.title} by{' '}
@@ -14,7 +18,10 @@ const OwnedSong = ({ song }) => {
         }
       })}
       - Current Value: {song.currentPrice} - Purchased at: {song.purchasePrice}{' '}
-      - Profit: {profit}
+      - Profit: {profit} or{' '}
+      {percentage.toLocaleString('en-US', {
+        style: 'percent',
+      })}
     </li>
   )
 }
@@ -26,6 +33,8 @@ const UserProfile = () => {
   if (!user) {
     return null
   }
+
+  console.log(JSON.stringify(user))
 
   const portfolioValue = user.portfolio.reduce(
     (prev, song) => prev + song.currentPrice,
@@ -39,7 +48,7 @@ const UserProfile = () => {
   return (
     <div>
       <h3>{user.display_name}'s Profile</h3>
-      <div>Total Net Worth - {user.points + portfolioValue}</div>
+      <div>Total Net Worth - {user.netWorth}</div>
       <div>You have {user.points} points available to spend</div>
       <h4>Your Portfolio - Worth {portfolioValue} Points</h4>
       <ul>
