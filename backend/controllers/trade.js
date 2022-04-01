@@ -4,9 +4,7 @@ const Song = require('../models/song')
 const User = require('../models/user')
 const logger = require('../utils/logger')
 
-tradeRouter.post('/buy', async (req, res) => {
-  const body = req.body
-
+const setupTrade = async (body) => {
   // TODO Verify user (token? cookie?)
   // TODO (This might modify below code as well)
 
@@ -27,6 +25,12 @@ tradeRouter.post('/buy', async (req, res) => {
   }
 
   const price = song.currentPrice
+
+  return [user, song, price]
+}
+
+tradeRouter.post('/buy', async (req, res) => {
+  const [user, song, price] = await setupTrade(req.body)
 
   if (price > user.points) {
     return res.status(400).json({
@@ -61,30 +65,8 @@ tradeRouter.post('/buy', async (req, res) => {
 })
 
 tradeRouter.post('/sell', async (req, res) => {
-  const body = req.body
+  const [user, song, price] = await setupTrade(req.body)
 
-  // TODO Verify user (token? cookie?)
-  // TODO (This might modify below code as well)
-
-  const user = await User.findOne({ email: body.email })
-
-  if (!user) {
-    return res.status(401).json({
-      error: 'could not find the user',
-    })
-  }
-
-  const song = await Song.findOne({ spotifyId: body.songId })
-
-  if (!song) {
-    return res.status(400).json({
-      error: 'could not find the song',
-    })
-  }
-
-  const price = song.currentPrice
-
-  // TODO Confirm user owns song
   let owned = false
 
   for (let s of user.songs) {
