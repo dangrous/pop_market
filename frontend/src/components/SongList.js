@@ -37,6 +37,10 @@ const SongList = () => {
     }
   }
 
+  console.log(user.songs[0].song.spotifyId)
+
+  console.log(songs[0].track.id)
+
   return (
     <div>
       <h3>Top Songs</h3>
@@ -60,7 +64,7 @@ const SongList = () => {
                   </em>
                   {user ? (
                     user.songs.findIndex(
-                      (holding) => holding.id === song.track.id
+                      (holding) => holding.song.spotifyId === song.track.id
                     ) === -1 ? (
                       <button
                         onClick={() => buySong(song.track.id, 100 - i)}

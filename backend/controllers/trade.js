@@ -85,6 +85,20 @@ tradeRouter.post('/sell', async (req, res) => {
   const price = song.currentPrice
 
   // TODO Confirm user owns song
+  let owned = false
+
+  for (let s of user.songs) {
+    if (s.song.toString() === song._id.toString()) {
+      owned = true
+      break
+    }
+  }
+
+  if (!owned) {
+    return res.status(400).json({
+      error: 'user does not own song',
+    })
+  }
 
   const trade = new Trade({
     song: song._id,
@@ -96,16 +110,8 @@ tradeRouter.post('/sell', async (req, res) => {
 
   await trade.save()
 
-  logger.info('song to remove', song._id.toString())
-
-  user.songs.map((s) => {
-    logger.info(s.song.toString())
-    logger.info(s.song.toString() === song._id.toString())
-  })
-
   user.trades = user.trades.concat(trade._id)
   user.points = user.points + price
-  logger.info(user.songs.length, 'before drop')
   user.songs = user.songs.filter(
     (s) => s.song.toString() !== song._id.toString()
   )
