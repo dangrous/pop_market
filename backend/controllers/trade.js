@@ -2,6 +2,7 @@ const tradeRouter = require('express').Router()
 const Trade = require('../models/trade')
 const Song = require('../models/song')
 const User = require('../models/user')
+const logger = require('../utils/logger')
 
 tradeRouter.post('/buy', async (req, res) => {
   const body = req.body
@@ -12,7 +13,7 @@ tradeRouter.post('/buy', async (req, res) => {
   const user = await User.findOne({ email: body.email })
 
   if (!user) {
-    return response.status(401).json({
+    return res.status(401).json({
       error: 'could not find the user',
     })
   }
@@ -20,7 +21,7 @@ tradeRouter.post('/buy', async (req, res) => {
   const song = await Song.findOne({ spotifyId: body.songId })
 
   if (!song) {
-    return response.status(400).json({
+    return res.status(400).json({
       error: 'could not find the song',
     })
   }
@@ -28,7 +29,7 @@ tradeRouter.post('/buy', async (req, res) => {
   const price = song.currentPrice
 
   if (price > user.points) {
-    return response.status(400).json({
+    return res.status(400).json({
       error: 'you do not have sufficient points',
     })
   }
@@ -68,26 +69,54 @@ tradeRouter.post('/sell', async (req, res) => {
   const user = await User.findOne({ email: body.email })
 
   if (!user) {
-    return response.status(401).json({
+    return res.status(401).json({
       error: 'could not find the user',
     })
   }
 
-  const song = await Song.findById(body.songId)
+  const song = await Song.findOne({ spotifyId: body.songId })
 
   if (!song) {
-    return response.status(400).json({
+    return res.status(400).json({
       error: 'could not find the song',
     })
   }
 
-  // ! Will need to make sure this gets updated if a song is owned and wasn't picked up
-  // ! in the last playlist update
   const price = song.currentPrice
 
   // TODO Confirm user owns song
-  // TODO Execute trade (create and save trade object)
-  // TODO Update user (portfolio, points, trades, net worth)
+
+  const trade = new Trade({
+    song: song._id,
+    price,
+    date: new Date(),
+    user: user._id,
+    action: 'SELL',
+  })
+
+  await trade.save()
+
+  logger.info('song to remove', song._id.toString())
+
+  user.songs.map((s) => {
+    logger.info(s.song.toString())
+    logger.info(s.song.toString() === song._id.toString())
+  })
+
+  user.trades = user.trades.concat(trade._id)
+  user.points = user.points + price
+  logger.info(user.songs.length, 'before drop')
+  user.songs = user.songs.filter(
+    (s) => s.song.toString() !== song._id.toString()
+  )
+  await user.save()
+
+  await user.populate({
+    path: 'songs',
+    populate: { path: 'song' },
+  })
+
+  res.status(200).send(user)
 })
 
 module.exports = tradeRouter

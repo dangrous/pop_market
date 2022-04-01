@@ -26,10 +26,6 @@ const userSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  passwordHash: {
-    type: String,
-    required: true,
-  },
   display_name: {
     type: String,
   },
@@ -41,7 +37,6 @@ const userSchema = mongoose.Schema({
   ],
   songs: {
     type: [ownedSongSchema],
-    required: true,
   },
   netWorth: {
     type: Number,

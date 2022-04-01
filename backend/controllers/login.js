@@ -149,6 +149,7 @@ loginRouter.get('/callback', async (req, res) => {
       createDate: new Date(),
       passwordHash: 'poop',
       display_name: user.data.display_name,
+      netWorth: 1000,
     })
 
     const savedUser = await newUser.save()

@@ -1,7 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { logoutUser } from '../reducers/userReducer'
+import { setUser } from '../reducers/userReducer'
+import userService from '../services/user'
 
-const OwnedSong = ({ song }) => {
+const OwnedSong = ({ song, sell }) => {
   const profit = song.song.currentPrice - song.purchasePrice
 
   const percentage =
@@ -21,7 +23,8 @@ const OwnedSong = ({ song }) => {
       {song.purchasePrice} - Profit: {profit} or{' '}
       {percentage.toLocaleString('en-US', {
         style: 'percent',
-      })}
+      })}{' '}
+      <button onClick={sell}>Sell This Song</button>
     </li>
   )
 }
@@ -34,7 +37,21 @@ const UserProfile = () => {
     return null
   }
 
-  console.log(JSON.stringify(user))
+  const sellSong = async (song) => {
+    console.log('You are selling a song!', JSON.stringify(song.song.id))
+
+    try {
+      const updatedUser = await userService.sell(
+        user.token,
+        song.song.spotifyId,
+        song.song.currentPrice,
+        user.email
+      )
+      dispatch(setUser(updatedUser))
+    } catch (exception) {
+      console.log('that didnt work right')
+    }
+  }
 
   const portfolioValue = user.songs.reduce(
     (prev, song) => prev + song.song.currentPrice,
@@ -53,7 +70,11 @@ const UserProfile = () => {
       <h4>Your Portfolio - Worth {portfolioValue} Points</h4>
       <ul>
         {user.songs.map((song) => (
-          <OwnedSong key={song.id} song={song} />
+          <OwnedSong
+            key={song.song.id}
+            song={song}
+            sell={() => sellSong(song)}
+          />
         ))}
       </ul>
       <button onClick={logout}>log out</button>
