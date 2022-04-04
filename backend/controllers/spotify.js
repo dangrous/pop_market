@@ -56,13 +56,15 @@ spotifyRouter.get('/', async (req, res) => {
     // const playlistData = dummyData.dummyData
     const playlistData = playlist.data
 
+    const cacheDate = new Date(playlistData.tracks.items[0].added_at)
+
     if (!cache) {
       cache = new Cache({
-        date: new Date(),
+        date: cacheDate,
         playlist: playlistData,
       })
     } else {
-      cache.date = new Date()
+      cache.date = cacheDate
       cache.playlist = playlistData
     }
 
@@ -79,12 +81,13 @@ spotifyRouter.get('/', async (req, res) => {
           title: currentSong.track.name,
           currentPrice: 100 - i,
           spotifyId: currentSong.track.id,
+          lastUpdated: cacheDate,
         })
 
         await song.save()
       } else {
         if (song.currentPrice != 100 - i) {
-          song.currentPrice = 100 - i
+          ;(song.currentPrice = 100 - i), (song.lastUpdated = cacheDate)
 
           await song.save()
         }

@@ -37,6 +37,8 @@ const LoginForm = () => {
   //   }
   // }
 
+  // ! This has to be hardcoded to work when not built for some reason
+  // ! It can be relative when built...
   const oauthRequestUrl = 'http://localhost:3001/api/login/oauth'
 
   return <a href={oauthRequestUrl}>Login with Spotify</a>

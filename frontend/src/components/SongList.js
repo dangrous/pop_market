@@ -37,10 +37,6 @@ const SongList = () => {
     }
   }
 
-  console.log(user.songs[0].song.spotifyId)
-
-  console.log(songs[0].track.id)
-
   return (
     <div>
       <h3>Top Songs</h3>

@@ -42,6 +42,9 @@ const userSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  lastUpdated: {
+    type: Date,
+  },
 })
 
 userSchema.set('toJSON', {
