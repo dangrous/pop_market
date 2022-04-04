@@ -8,7 +8,7 @@ const Leaderboard = () => {
     const fetchUsers = async () => {
       const allUsers = await axios.get('/api/users')
 
-      setUsers(allUsers.data)
+      setUsers(allUsers.data.slice(0, 10))
     }
 
     fetchUsers()
@@ -16,12 +16,12 @@ const Leaderboard = () => {
 
   return (
     <div>
-      <h3>Leaderboard</h3>
+      <h3>Leaderboard (Top Ten Users)</h3>
       <ul>
         {users.map((user) => {
           return (
             <li key={user.email}>
-              {user.email} / {user.points} / {user.createDate}
+              {user.email} / {user.netWorth} / {user.createDate}
             </li>
           )
         })}

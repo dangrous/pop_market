@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { initializeSongs } from './reducers/songReducer'
+import { trySpotifyUser } from './reducers/userReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import SongList from './components/SongList'
 import Leaderboard from './components/Leaderboard'
@@ -12,6 +13,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeSongs())
+    dispatch(trySpotifyUser())
   }, [dispatch])
 
   return (

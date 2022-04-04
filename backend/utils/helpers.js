@@ -1,4 +1,5 @@
 const Song = require('../models/song')
+const logger = require('./logger')
 
 const asyncForEach = async (array, callback) => {
   for (let index = 0; index < array.length; index++) {
@@ -13,14 +14,14 @@ const createPortfolio = async (trades) => {
 
   trades.reverse()
 
+  logger.info(trades)
+
   await asyncForEach(trades, async (trade) => {
     if (!ownedIds.includes(trade.song) && !soldIds.includes(trade.song)) {
       if (trade.action === 'BUY') {
         ownedIds.push(trade.song)
 
         let song = await Song.findOne({ spotifyId: trade.song })
-
-        console.log(song)
 
         songs.push({
           title: song.title,

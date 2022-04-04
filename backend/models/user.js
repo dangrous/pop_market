@@ -1,5 +1,17 @@
 const mongoose = require('mongoose')
 
+const ownedSongSchema = mongoose.Schema({
+  song: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Song',
+    required: true,
+  },
+  purchasePrice: {
+    type: Number,
+    required: true,
+  },
+})
+
 const userSchema = mongoose.Schema({
   email: {
     type: String,
@@ -14,9 +26,8 @@ const userSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  passwordHash: {
+  display_name: {
     type: String,
-    required: true,
   },
   trades: [
     {
@@ -25,8 +36,14 @@ const userSchema = mongoose.Schema({
     },
   ],
   songs: {
-    type: [String],
+    type: [ownedSongSchema],
+  },
+  netWorth: {
+    type: Number,
     required: true,
+  },
+  lastUpdated: {
+    type: Date,
   },
 })
 

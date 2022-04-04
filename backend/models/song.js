@@ -17,6 +17,9 @@ const songSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  lastUpdated: {
+    type: Date,
+  },
 })
 
 songSchema.set('toJSON', {

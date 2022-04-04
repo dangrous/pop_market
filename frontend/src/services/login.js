@@ -6,5 +6,15 @@ const login = async (credentials) => {
   return response.data
 }
 
-const loginService = { login }
+const logout = async () => {
+  const response = await axios.post(baseUrl + '/logout')
+  return response.data
+}
+
+const trySpotify = async () => {
+  const response = await axios.post(baseUrl + '/tryspotify')
+  return response.data
+}
+
+const loginService = { login, trySpotify, logout }
 export default loginService
