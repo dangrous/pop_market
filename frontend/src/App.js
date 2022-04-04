@@ -17,12 +17,22 @@ const App = () => {
   }, [dispatch])
 
   return (
-    <div>
-      <h1>Pop Market</h1>
-      {!user ? <LoginForm /> : <UserProfile />}
-      <Leaderboard />
-      <SongList />
-    </div>
+    <>
+      <h1 className='display-5 bg-dark text-white p-2 border-bottom border-white'>
+        Pop Market
+      </h1>
+      <div className='container-fluid'>
+        <div className='row'>
+          <div className='col'>
+            {!user ? <LoginForm /> : <UserProfile />}
+            <Leaderboard />
+          </div>
+          <div className='col-5'>
+            <SongList />
+          </div>
+        </div>
+      </div>
+    </>
   )
 }
 

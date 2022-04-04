@@ -39,41 +39,57 @@ const SongList = () => {
 
   return (
     <div>
-      <h3>Top Songs</h3>
-      <ul>
+      <h3>Top 50 Songs on Spotify (updated daily) </h3>
+      <ul className='list-group'>
         {songs
           ? songs.map((song, i) => {
               return (
-                <li key={song.track.id}>
-                  <strong>
-                    #{i + 1}: {song.track.name}
-                  </strong>{' '}
-                  by{' '}
-                  <em>
-                    {song.track.artists.map((artist, i, artists) => {
-                      if (i !== artists.length - 1) {
-                        return artist.name + ', '
-                      } else {
-                        return artist.name
-                      }
-                    })}
-                  </em>
-                  {user ? (
-                    user.songs.findIndex(
-                      (holding) => holding.song.spotifyId === song.track.id
-                    ) === -1 ? (
-                      <button
-                        onClick={() => buySong(song.track.id, 100 - i)}
-                        disabled={user.points - (100 - i) < 0}
-                      >
-                        BUY This Song for {100 - i} Points!
-                      </button>
-                    ) : (
-                      <button onClick={() => sellSong(song.track.id, 100 - i)}>
-                        SELL This Song for {100 - i} Points!
-                      </button>
-                    )
-                  ) : null}
+                <li className='list-group-item ps-2' key={song.track.id}>
+                  <div className='row'>
+                    <div className='col-xxl-auto fs-3'>
+                      {i + 1}.
+                      <img
+                        src={song.track.album.images[1].url}
+                        alt={`Album cover art for "${song.track.name}"`}
+                        height={94}
+                        className='ms-1'
+                      />
+                    </div>
+                    <div className='col-9'>
+                      <strong>{song.track.name}</strong>
+                      <br />
+                      <em>
+                        {song.track.artists.map((artist, i, artists) => {
+                          if (i !== artists.length - 1) {
+                            return artist.name + ', '
+                          } else {
+                            return artist.name
+                          }
+                        })}
+                      </em>
+                      <br />
+                      {user ? (
+                        user.songs.findIndex(
+                          (holding) => holding.song.spotifyId === song.track.id
+                        ) === -1 ? (
+                          <button
+                            className='btn btn-primary btn-sm mt-2'
+                            onClick={() => buySong(song.track.id, 100 - i)}
+                            disabled={user.points - (100 - i) < 0}
+                          >
+                            BUY This Song for {100 - i} Points!
+                          </button>
+                        ) : (
+                          <button
+                            className='btn btn-info btn-sm mt-2'
+                            onClick={() => sellSong(song.track.id, 100 - i)}
+                          >
+                            SELL This Song for {100 - i} Points!
+                          </button>
+                        )
+                      ) : null}
+                    </div>
+                  </div>
                 </li>
               )
             })

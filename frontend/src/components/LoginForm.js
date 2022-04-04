@@ -41,7 +41,11 @@ const LoginForm = () => {
   // ! It can be relative when built...
   const oauthRequestUrl = 'http://localhost:3001/api/login/oauth'
 
-  return <a href={oauthRequestUrl}>Login with Spotify</a>
+  return (
+    <a className='btn btn-primary' href={oauthRequestUrl}>
+      Login with Spotify
+    </a>
+  )
 
   // return (
   //   <div>
