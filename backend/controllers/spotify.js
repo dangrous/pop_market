@@ -26,7 +26,7 @@ spotifyRouter.get('/', async (req, res) => {
     const token_url = 'https://accounts.spotify.com/api/token'
 
     const response = await axios
-      .post('https://accounts.spotify.com/api/token', null, {
+      .post(token_url, null, {
         params: {
           client_id: config.CLIENT_ID,
           client_secret: config.CLIENT_SECRET,
@@ -87,7 +87,8 @@ spotifyRouter.get('/', async (req, res) => {
         await song.save()
       } else {
         if (song.currentPrice != 100 - i) {
-          ;(song.currentPrice = 100 - i), (song.lastUpdated = cacheDate)
+          song.currentPrice = 100 - i
+          song.lastUpdated = cacheDate
 
           await song.save()
         }

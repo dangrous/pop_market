@@ -1,10 +1,7 @@
-const jwt = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
 const loginRouter = require('express').Router()
 const User = require('../models/user')
 const logger = require('../utils/logger')
 const config = require('../utils/config')
-const Song = require('../models/song')
 const helper = require('../utils/helpers')
 const axios = require('axios')
 
@@ -25,19 +22,9 @@ loginRouter.post('/', async (request, response) => {
     })
   }
 
-  const userForToken = {
-    username: user.username,
-    id: user._id,
-  }
-
-  const token = jwt.sign(userForToken, config.SECRET, {
-    expiresIn: 60 * 60,
-  })
-
   const songs = await helper.createPortfolio(user.trades)
 
   response.status(200).send({
-    token,
     email: user.email,
     points: user.points,
     netWorth: 10,
@@ -95,11 +82,6 @@ loginRouter.post('/tryspotify', async (req, res) => {
       res.status(200).send(user)
     }
   }
-
-  // console.log(req.cookies)
-  // if (!request.cookies) {
-  //   logger.error('no cookies provided')
-  // }
 })
 
 loginRouter.get('/callback', async (req, res) => {
@@ -147,7 +129,6 @@ loginRouter.get('/callback', async (req, res) => {
       email: user.data.id,
       points: 1000,
       createDate: new Date(),
-      passwordHash: 'poop',
       display_name: user.data.display_name,
       netWorth: 1000,
     })

@@ -2,7 +2,6 @@ const tradeRouter = require('express').Router()
 const Trade = require('../models/trade')
 const Song = require('../models/song')
 const User = require('../models/user')
-const logger = require('../utils/logger')
 
 const setupTrade = async (body) => {
   // TODO Verify user (token? cookie?)
