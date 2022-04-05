@@ -1,11 +1,10 @@
 import { useEffect } from 'react'
 import { initializeSongs } from './reducers/songReducer'
-import { trySpotifyUser } from './reducers/userReducer'
+import { trySpotifyUser, logoutUser } from './reducers/userReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import SongList from './components/SongList'
 import Leaderboard from './components/Leaderboard'
 import UserProfile from './components/UserProfile'
-import LoginForm from './components/LoginForm'
 
 const App = () => {
   const user = useSelector((state) => state.user)
@@ -16,15 +15,32 @@ const App = () => {
     dispatch(trySpotifyUser())
   }, [dispatch])
 
+  const oauthRequestUrl = 'http://localhost:3001/api/login/oauth'
+
+  const logout = () => {
+    dispatch(logoutUser())
+  }
+
   return (
     <>
-      <h1 className='display-5 bg-dark text-white p-2 border-bottom border-white'>
-        Pop Market
-      </h1>
+      <div className='d-flex justify-content-between bg-dark text-white'>
+        <h1 className='display-5 p-2'>Pop Market</h1>
+        <div className='d-flex align-items-center'>
+          {user ? (
+            <button className='m-2 btn btn-sm btn-primary' onClick={logout}>
+              Log Out
+            </button>
+          ) : (
+            <a href={oauthRequestUrl} className='m-2 btn btn-primary btn-sm'>
+              Login with Spotify
+            </a>
+          )}
+        </div>
+      </div>
       <div className='container-fluid'>
         <div className='row'>
           <div className='col'>
-            {!user ? <LoginForm /> : <UserProfile />}
+            {user ? <UserProfile /> : null}
             <Leaderboard />
           </div>
           <div className='col-5'>
