@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { logoutUser } from '../reducers/userReducer'
 import { setUser } from '../reducers/userReducer'
 import userService from '../services/user'
 
@@ -42,7 +41,6 @@ const UserProfile = () => {
 
     try {
       const updatedUser = await userService.sell(
-        user.token,
         song.song.spotifyId,
         song.song.currentPrice,
         user.email

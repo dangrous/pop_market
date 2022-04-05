@@ -9,12 +9,7 @@ const SongList = () => {
   const buySong = async (songId, price) => {
     console.log('You are buying a song!', songId)
     try {
-      const updatedUser = await userService.buy(
-        user.token,
-        songId,
-        price,
-        user.email
-      )
+      const updatedUser = await userService.buy(songId, price, user.email)
       dispatch(setUser(updatedUser))
     } catch (exception) {
       console.log('something went wrong')
@@ -25,12 +20,7 @@ const SongList = () => {
   const sellSong = async (songId, price) => {
     console.log('You are selling a song!', songId)
     try {
-      const updatedUser = await userService.sell(
-        user.token,
-        songId,
-        price,
-        user.email
-      )
+      const updatedUser = await userService.sell(songId, price, user.email)
       dispatch(setUser(updatedUser))
     } catch (exception) {
       console.log('that didnt work right')
