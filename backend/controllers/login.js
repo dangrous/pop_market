@@ -115,7 +115,8 @@ loginRouter.get('/callback', async (req, res) => {
       params: {
         code: code,
         // ! This will need to not be hardcoded for deployment. Not quite sure how to do that.
-        redirect_uri: '/api/login/callback',
+        redirect_uri:
+          'https://floating-earth-98213.herokuapp.com/api/login/callback',
         grant_type: 'authorization_code',
       },
       headers: {
