@@ -87,7 +87,8 @@ spotifyRouter.get('/', async (req, res) => {
         await song.save()
       } else {
         if (song.currentPrice != 100 - i) {
-          ;(song.currentPrice = 100 - i), (song.lastUpdated = cacheDate)
+          song.currentPrice = 100 - i
+          song.lastUpdated = cacheDate
 
           await song.save()
         }
