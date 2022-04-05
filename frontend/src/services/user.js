@@ -1,17 +1,5 @@
 import axios from 'axios'
 
-const createUser = async (email, password) => {
-  const toSend = {
-    email,
-    password,
-  }
-  await axios.post('/api/users/', toSend)
-
-  const response = await axios.post('/api/login', toSend)
-
-  return response.data
-}
-
 const buy = async (songId, price, email) => {
   const toSend = {
     songId,
@@ -32,5 +20,5 @@ const sell = async (songId, price, email) => {
   return response.data
 }
 
-const userService = { buy, sell, createUser }
+const userService = { buy, sell }
 export default userService

@@ -1,5 +1,5 @@
 import axios from 'axios'
-const baseUrl = '/api/login'
+const baseUrl = '/api/users'
 
 const login = async (credentials) => {
   const response = await axios.post(baseUrl, credentials)
@@ -12,7 +12,7 @@ const logout = async () => {
 }
 
 const trySpotify = async () => {
-  const response = await axios.post(baseUrl + '/tryspotify')
+  const response = await axios.post(baseUrl + '/login')
   return response.data
 }
 

@@ -6,15 +6,6 @@ const Song = require('../models/song')
 const Cache = require('../models/cache')
 const dummyData = require('../dummydata')
 
-const auth_token = Buffer.from(
-  `${config.CLIENT_ID}:${config.CLIENT_SECRET}`,
-  'utf-8'
-).toString('base64')
-
-const grantType = {
-  grant_type: 'client_credentials',
-}
-
 spotifyRouter.get('/', async (req, res) => {
   let cache = await Cache.findOne({})
 

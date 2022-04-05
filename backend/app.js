@@ -29,7 +29,7 @@ app.use(middleware.requestLogger)
 app.use(cookieParser())
 
 app.use('/api/users', usersRouter)
-app.use('/api/login', loginRouter)
+// app.use('/api/login', loginRouter)
 app.use('/api/spotify', spotifyRouter)
 app.use('/api/trade', tradeRouter)
 

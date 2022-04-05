@@ -15,7 +15,7 @@ const App = () => {
     dispatch(trySpotifyUser())
   }, [dispatch])
 
-  const oauthRequestUrl = 'http://localhost:3001/api/login/oauth'
+  const oauthRequestUrl = 'http://localhost:3001/api/users/oauth'
 
   const logout = () => {
     dispatch(logoutUser())
