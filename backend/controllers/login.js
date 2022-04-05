@@ -47,7 +47,7 @@ loginRouter.post('/', async (request, response) => {
 
 loginRouter.get('/oauth', (req, res) => {
   res.redirect(
-    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fapi%2Flogin%2Fcallback`
+    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Ffloating-earth-98213.herokuapp.com%2F%2Fapi%2Flogin%2Fcallback`
   )
 })
 
@@ -115,7 +115,7 @@ loginRouter.get('/callback', async (req, res) => {
       params: {
         code: code,
         // ! This will need to not be hardcoded for deployment. Not quite sure how to do that.
-        redirect_uri: 'http://localhost:3001/api/login/callback',
+        redirect_uri: '/api/login/callback',
         grant_type: 'authorization_code',
       },
       headers: {
