@@ -16,16 +16,19 @@ const Leaderboard = () => {
 
   return (
     <div>
-      <h3>Leaderboard (Top Ten Users)</h3>
-      <ul>
+      <h3>
+        Leaderboard
+        <small className='text-muted'> (Top Ten Users by Net Worth)</small>
+      </h3>
+      <ol className='list-group list-group-numbered'>
         {users.map((user) => {
           return (
-            <li key={user.email}>
-              {user.email} / {user.netWorth} / {user.createDate}
+            <li className='list-group-item' key={user.email}>
+              {user.netWorth} - {user.email}
             </li>
           )
         })}
-      </ul>
+      </ol>
     </div>
   )
 }
