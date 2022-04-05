@@ -47,7 +47,7 @@ loginRouter.post('/', async (request, response) => {
 
 loginRouter.get('/oauth', (req, res) => {
   res.redirect(
-    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Ffloating-earth-98213.herokuapp.com%2F%2Fapi%2Flogin%2Fcallback`
+    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Ffloating-earth-98213.herokuapp.com%2Fapi%2Flogin%2Fcallback`
   )
 })
 
