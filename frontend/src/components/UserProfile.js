@@ -58,10 +58,6 @@ const UserProfile = () => {
     0
   )
 
-  const logout = () => {
-    dispatch(logoutUser())
-  }
-
   return (
     <div>
       <h3>{user.display_name}'s Profile</h3>
@@ -77,7 +73,6 @@ const UserProfile = () => {
           />
         ))}
       </ul>
-      <button onClick={logout}>log out</button>
     </div>
   )
 }
