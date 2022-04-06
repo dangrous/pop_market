@@ -29,6 +29,7 @@ const createPortfolio = async (trades) => {
           id: trade.song,
           purchasePrice: trade.price,
           currentPrice: song.currentPrice,
+          imageUrl: song.imageUrl,
         })
       } else {
         soldIds.push(trade.song)

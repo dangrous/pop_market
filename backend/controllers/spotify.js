@@ -73,6 +73,7 @@ spotifyRouter.get('/', async (req, res) => {
           currentPrice: 100 - i,
           spotifyId: currentSong.track.id,
           lastUpdated: cacheDate,
+          imageUrl: currentSong.track.album.images[1].url,
         })
 
         await song.save()

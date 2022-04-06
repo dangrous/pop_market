@@ -8,22 +8,42 @@ const OwnedSong = ({ song, sell }) => {
   const percentage =
     (song.song.currentPrice - song.purchasePrice) / song.purchasePrice
 
+  let background = ''
+
+  if (profit > 0) {
+    background = ' bg-success'
+  }
+
+  if (profit < 0) {
+    background = ' bg-danger'
+  }
+
   return (
-    <li>
-      {song.song.title} by{' '}
-      {song.song.artist.map((artist, i, artists) => {
-        if (i !== artists.length - 1) {
-          return artist.name + ', '
-        } else {
-          return artist.name
-        }
-      })}
-      - Current Value: {song.song.currentPrice} - Purchased at:{' '}
-      {song.purchasePrice} - Profit: {profit} or{' '}
-      {percentage.toLocaleString('en-US', {
-        style: 'percent',
-      })}{' '}
-      <button onClick={sell}>Sell This Song</button>
+    <li className={'list-group-item d-flex' + background}>
+      <div className='flex-grow-1'>
+        <strong>{song.song.title}</strong>
+        <br />
+        <em>
+          {song.song.artist.map((artist, i, artists) => {
+            if (i !== artists.length - 1) {
+              return artist.name + ', '
+            } else {
+              return artist.name
+            }
+          })}
+        </em>
+        <br />
+        Current Value: {song.song.currentPrice} - Purchased at:{' '}
+        {song.purchasePrice} - Profit: {profit} or{' '}
+        {percentage.toLocaleString('en-US', {
+          style: 'percent',
+        })}{' '}
+      </div>
+      <div className='flex-shrink-0 align-self-center'>
+        <button className='btn btn-info btn-sm' onClick={sell}>
+          Sell This Song
+        </button>
+      </div>
     </li>
   )
 }
@@ -58,11 +78,14 @@ const UserProfile = () => {
 
   return (
     <div>
-      <h3>{user.display_name}'s Profile</h3>
+      <h2>{user.display_name}'s Profile</h2>
       <div>Total Net Worth - {user.netWorth}</div>
       <div>You have {user.points} points available to spend</div>
-      <h4>Your Portfolio - Worth {portfolioValue} Points</h4>
-      <ul>
+      <h3>
+        Your Portfolio
+        <small className='text-muted'> Worth {portfolioValue} Points</small>
+      </h3>
+      <ul className='list-group'>
         {user.songs.map((song) => (
           <OwnedSong
             key={song.song.id}

@@ -29,10 +29,10 @@ const SongList = () => {
 
   return (
     <div>
-      <h3>
+      <h2>
         Top 50 Songs on Spotify
         <small className='text-muted'> (Updated Daily)</small>
-      </h3>
+      </h2>
       <ul className='list-group'>
         {songs
           ? songs.map((song, i) => {

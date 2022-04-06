@@ -20,6 +20,9 @@ const songSchema = new mongoose.Schema({
   lastUpdated: {
     type: Date,
   },
+  imageUrl: {
+    type: String,
+  },
 })
 
 songSchema.set('toJSON', {
