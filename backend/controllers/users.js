@@ -1,12 +1,12 @@
-const Song = require('../models/song')
-const usersRouter = require('express').Router()
-const User = require('../models/user')
-const Cache = require('../models/cache')
-const config = require('../utils/config')
-const axios = require('axios')
-const logger = require('../utils/logger')
-const { response } = require('express')
 const jwt = require('jsonwebtoken')
+const axios = require('axios')
+
+const usersRouter = require('express').Router()
+
+const User = require('../models/user')
+
+const logger = require('../utils/logger')
+const config = require('../utils/config')
 
 usersRouter.get('/oauth', (req, res) => {
   res.redirect(
@@ -24,17 +24,13 @@ usersRouter.post('/logout', async (req, res) => {
 
 usersRouter.post('/login', async (req, res) => {
   if (!req.cookies || !req.cookies.popMarketSession) {
-    logger.info('no cookie sent')
     res.send(null)
   } else {
-    logger.info('finding user...')
     const decodedUser = jwt.verify(req.cookies.popMarketSession, config.SECRET)
 
     if (!decodedUser.id) {
       res.send(null)
     }
-
-    logger.info('user id found...')
 
     const user = await User.findOne({
       email: decodedUser.id,
@@ -44,10 +40,8 @@ usersRouter.post('/login', async (req, res) => {
     })
 
     if (!user) {
-      logger.info('user not found')
       res.send(null)
     } else {
-      logger.info('user found!')
       res.status(200).send(user)
     }
   }
