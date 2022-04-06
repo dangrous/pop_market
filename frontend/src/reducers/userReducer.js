@@ -22,9 +22,9 @@ export const login = (credentials) => {
   }
 }
 
-export const trySpotifyUser = () => {
+export const loginUser = () => {
   return async (dispatch) => {
-    const user = await loginService.trySpotify()
+    const user = await loginService.login()
     if (user) dispatch(setUser(user))
   }
 }
