@@ -29,30 +29,32 @@ const SongList = () => {
 
   return (
     <div>
-      <h3>
+      <h2>
         Top 50 Songs on Spotify
         <small className='text-muted'> (Updated Daily)</small>
-      </h3>
+      </h2>
       <ul className='list-group'>
         {songs
           ? songs.map((song, i) => {
+              const songData = song.track
+
               return (
-                <li className='list-group-item ps-2' key={song.track.id}>
+                <li className='list-group-item ps-2' key={songData.id}>
                   <div className='row'>
                     <div className='col-xxl-auto fs-3'>
                       {i + 1}.
                       <img
-                        src={song.track.album.images[1].url}
-                        alt={`Album cover art for "${song.track.name}"`}
+                        src={songData.album.images[1].url}
+                        alt={`Album cover art for "${songData.name}"`}
                         height={94}
                         className='ms-1'
                       />
                     </div>
                     <div className='col-9'>
-                      <strong>{song.track.name}</strong>
+                      <strong>{songData.name}</strong>
                       <br />
                       <em>
-                        {song.track.artists.map((artist, i, artists) => {
+                        {songData.artists.map((artist, i, artists) => {
                           if (i !== artists.length - 1) {
                             return artist.name + ', '
                           } else {
@@ -63,11 +65,11 @@ const SongList = () => {
                       <br />
                       {user ? (
                         user.songs.findIndex(
-                          (holding) => holding.song.spotifyId === song.track.id
+                          (holding) => holding.song.spotifyId === songData.id
                         ) === -1 ? (
                           <button
                             className='btn btn-primary btn-sm mt-2'
-                            onClick={() => buySong(song.track.id, 100 - i)}
+                            onClick={() => buySong(songData.id, 100 - i)}
                             disabled={user.points - (100 - i) < 0}
                           >
                             BUY This Song for {100 - i} Points!
@@ -75,7 +77,7 @@ const SongList = () => {
                         ) : (
                           <button
                             className='btn btn-info btn-sm mt-2'
-                            onClick={() => sellSong(song.track.id, 100 - i)}
+                            onClick={() => sellSong(songData.id, 100 - i)}
                           >
                             SELL This Song for {100 - i} Points!
                           </button>
