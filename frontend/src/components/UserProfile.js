@@ -5,8 +5,7 @@ import userService from '../services/user'
 const OwnedSong = ({ song, sell }) => {
   const profit = song.song.currentPrice - song.purchasePrice
 
-  const percentage =
-    (song.song.currentPrice - song.purchasePrice) / song.purchasePrice
+  const percentage = profit / song.purchasePrice
 
   let background = ''
 
@@ -18,13 +17,23 @@ const OwnedSong = ({ song, sell }) => {
     background = ' bg-danger'
   }
 
+  const songData = song.song.data
+
   return (
     <li className={'list-group-item d-flex' + background}>
-      <div className='flex-grow-1'>
-        <strong>{song.song.title}</strong>
+      <div className='col-xxl-auto fs-3'>
+        <img
+          src={songData.album.images[1].url}
+          alt={`Album cover art for "${songData.name}"`}
+          height={94}
+          className='me-3'
+        />
+      </div>
+      <div className='flex-grow-1 align-self-center'>
+        <strong>{songData.name}</strong>
         <br />
         <em>
-          {song.song.artist.map((artist, i, artists) => {
+          {songData.artists.map((artist, i, artists) => {
             if (i !== artists.length - 1) {
               return artist.name + ', '
             } else {
@@ -78,12 +87,12 @@ const UserProfile = () => {
 
   return (
     <div>
-      <h2>{user.display_name}'s Profile</h2>
+      <h2 className='display-5'>{user.display_name}'s Profile</h2>
       <div>Total Net Worth - {user.netWorth}</div>
       <div>You have {user.points} points available to spend</div>
       <h3>
         Your Portfolio
-        <small className='text-muted'> Worth {portfolioValue} Points</small>
+        <small className='text-muted'>(Worth {portfolioValue} Points)</small>
       </h3>
       <ul className='list-group'>
         {user.songs.map((song) => (
