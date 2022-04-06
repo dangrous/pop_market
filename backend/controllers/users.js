@@ -5,6 +5,8 @@ const Cache = require('../models/cache')
 const config = require('../utils/config')
 const axios = require('axios')
 const logger = require('../utils/logger')
+const { response } = require('express')
+const jwt = require('jsonwebtoken')
 
 usersRouter.get('/oauth', (req, res) => {
   res.redirect(
@@ -24,9 +26,14 @@ usersRouter.post('/login', async (req, res) => {
   if (!req.cookies || !req.cookies.popMarketSession) {
     res.send(null)
   } else {
-    logger.error('found user!')
+    const decodedUser = jwt.verify(req.cookies.popMarketSession, config.SECRET)
+
+    if (!decodedUser.id) {
+      return response.status(401).json({ error: 'incorrect cookie' })
+    }
+
     const user = await User.findOne({
-      email: req.cookies.popMarketSession,
+      email: decodedUser.id,
     }).populate({
       path: 'songs',
       populate: { path: 'song' },
@@ -65,8 +72,6 @@ usersRouter.get('/callback', async (req, res) => {
       logger.error(error)
     })
 
-  console.log(response.data)
-
   const token = response.data.access_token
 
   const user = await axios.get('https://api.spotify.com/v1/me', {
@@ -75,8 +80,6 @@ usersRouter.get('/callback', async (req, res) => {
       'Content-Type': 'application/json',
     },
   })
-
-  console.log(user.data)
 
   const existingUser = await User.findOne({ email: user.data.id })
 
@@ -92,9 +95,15 @@ usersRouter.get('/callback', async (req, res) => {
     await newUser.save()
   }
 
-  res.cookie('popMarketSession', user.data.id, {
+  const userForToken = {
+    id: user.data.id,
+  }
+
+  const userToken = jwt.sign(userForToken, config.SECRET)
+
+  res.cookie('popMarketSession', userToken, {
     httpOnly: true,
-    maxAge: 360000,
+    maxAge: 3600,
   })
   // ! This redirects to the built version which is not great for testing. How fix?
   res.redirect('/')
