@@ -24,13 +24,17 @@ usersRouter.post('/logout', async (req, res) => {
 
 usersRouter.post('/login', async (req, res) => {
   if (!req.cookies || !req.cookies.popMarketSession) {
+    logger.info('no cookie sent')
     res.send(null)
   } else {
+    logger.info('finding user...')
     const decodedUser = jwt.verify(req.cookies.popMarketSession, config.SECRET)
 
     if (!decodedUser.id) {
-      return response.status(401).json({ error: 'incorrect cookie' })
+      res.send(null)
     }
+
+    logger.info('user id found...')
 
     const user = await User.findOne({
       email: decodedUser.id,
@@ -40,8 +44,10 @@ usersRouter.post('/login', async (req, res) => {
     })
 
     if (!user) {
+      logger.info('user not found')
       res.send(null)
     } else {
+      logger.info('user found!')
       res.status(200).send(user)
     }
   }
@@ -103,7 +109,7 @@ usersRouter.get('/callback', async (req, res) => {
 
   res.cookie('popMarketSession', userToken, {
     httpOnly: true,
-    maxAge: 3600,
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   })
   // ! This redirects to the built version which is not great for testing. How fix?
   res.redirect('/')
