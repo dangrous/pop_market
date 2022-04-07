@@ -7,6 +7,7 @@ const Cache = require('../models/cache')
 const dummyData = require('../dummydata')
 const User = require('../models/user')
 
+// The following function is mostly for testing, so use sparingly!
 // spotifyRouter.get('/deletesongs', async (req, res) => {
 //   await Song.deleteMany({})
 

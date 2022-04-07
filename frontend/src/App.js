@@ -40,8 +40,8 @@ const App = () => {
       <div className='container-fluid'>
         <div className='row'>
           <div className='col'>
-            {user ? <UserProfile /> : null}
             <Leaderboard />
+            {user ? <UserProfile /> : null}
           </div>
           <div className='col-5'>
             <SongList />
