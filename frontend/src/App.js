@@ -15,11 +15,7 @@ const App = () => {
     dispatch(loginUser())
   }, [dispatch])
 
-<<<<<<< HEAD
   const oauthRequestUrl = '/api/login/oauth'
-=======
-  const oauthRequestUrl = 'http://localhost:3001/api/users/oauth'
->>>>>>> main
 
   const logout = () => {
     dispatch(logoutUser())
