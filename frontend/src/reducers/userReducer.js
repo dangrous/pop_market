@@ -14,17 +14,9 @@ const userSlice = createSlice({
   },
 })
 
-export const login = (credentials) => {
+export const loginUser = () => {
   return async (dispatch) => {
-    const user = await loginService.login(credentials)
-    window.localStorage.setItem('popMarketUser', JSON.stringify(user))
-    dispatch(setUser(user))
-  }
-}
-
-export const trySpotifyUser = () => {
-  return async (dispatch) => {
-    const user = await loginService.trySpotify()
+    const user = await loginService.login()
     if (user) dispatch(setUser(user))
   }
 }

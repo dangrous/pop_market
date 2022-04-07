@@ -1,31 +1,7 @@
 import axios from 'axios'
-const baseUrl = '/api/users/points'
 
-const deduct = async (token, email, amount) => {
+const buy = async (songId, price, email) => {
   const toSend = {
-    token,
-    email,
-    amount,
-  }
-  const response = await axios.post(baseUrl, toSend)
-  return response.data
-}
-
-const createUser = async (email, password) => {
-  const toSend = {
-    email,
-    password,
-  }
-  await axios.post('/api/users/', toSend)
-
-  const response = await axios.post('/api/login', toSend)
-
-  return response.data
-}
-
-const buy = async (token, songId, price, email) => {
-  const toSend = {
-    token,
     songId,
     price,
     email,
@@ -34,9 +10,8 @@ const buy = async (token, songId, price, email) => {
   return response.data
 }
 
-const sell = async (token, songId, price, email) => {
+const sell = async (songId, price, email) => {
   const toSend = {
-    token,
     songId,
     price,
     email,
@@ -45,5 +20,5 @@ const sell = async (token, songId, price, email) => {
   return response.data
 }
 
-const userService = { deduct, buy, sell, createUser }
+const userService = { buy, sell }
 export default userService

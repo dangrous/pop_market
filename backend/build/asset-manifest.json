@@ -1,10 +1,19 @@
 {
   "files": {
+<<<<<<< HEAD
     "main.js": "/static/js/main.e618aa02.js",
     "index.html": "/index.html",
     "main.e618aa02.js.map": "/static/js/main.e618aa02.js.map"
   },
   "entrypoints": [
     "static/js/main.e618aa02.js"
+=======
+    "main.js": "/static/js/main.f49b38fa.js",
+    "index.html": "/index.html",
+    "main.f49b38fa.js.map": "/static/js/main.f49b38fa.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.f49b38fa.js"
+>>>>>>> main
   ]
 }

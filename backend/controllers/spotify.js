@@ -5,15 +5,15 @@ const logger = require('../utils/logger')
 const Song = require('../models/song')
 const Cache = require('../models/cache')
 const dummyData = require('../dummydata')
+const User = require('../models/user')
 
-const auth_token = Buffer.from(
-  `${config.CLIENT_ID}:${config.CLIENT_SECRET}`,
-  'utf-8'
-).toString('base64')
+// The following function is mostly for testing, so use sparingly!
+// spotifyRouter.get('/deletesongs', async (req, res) => {
+//   await Song.deleteMany({})
 
-const grantType = {
-  grant_type: 'client_credentials',
-}
+//   const test = await Song.find({})
+//   res.send(test.data)
+// })
 
 spotifyRouter.get('/', async (req, res) => {
   let cache = await Cache.findOne({})
@@ -26,7 +26,7 @@ spotifyRouter.get('/', async (req, res) => {
     const token_url = 'https://accounts.spotify.com/api/token'
 
     const response = await axios
-      .post('https://accounts.spotify.com/api/token', null, {
+      .post(token_url, null, {
         params: {
           client_id: config.CLIENT_ID,
           client_secret: config.CLIENT_SECRET,
@@ -58,17 +58,7 @@ spotifyRouter.get('/', async (req, res) => {
 
     const cacheDate = new Date(playlistData.tracks.items[0].added_at)
 
-    if (!cache) {
-      cache = new Cache({
-        date: cacheDate,
-        playlist: playlistData,
-      })
-    } else {
-      cache.date = cacheDate
-      cache.playlist = playlistData
-    }
-
-    await cache.save()
+    const updated = []
 
     for (let i = 0; i < playlistData.tracks.items.length; i++) {
       let currentSong = playlistData.tracks.items[i]
@@ -77,10 +67,9 @@ spotifyRouter.get('/', async (req, res) => {
 
       if (!song) {
         song = new Song({
-          artist: currentSong.track.artists,
-          title: currentSong.track.name,
-          currentPrice: 100 - i,
           spotifyId: currentSong.track.id,
+          data: currentSong.track,
+          currentPrice: 100 - i,
           lastUpdated: cacheDate,
         })
 
@@ -93,7 +82,56 @@ spotifyRouter.get('/', async (req, res) => {
           await song.save()
         }
       }
+
+      updated.push(currentSong.track.id)
     }
+
+    // TODO Go through users, update any remaining song prices.
+    const users = await User.find({})
+
+    for (let user of users) {
+      if (user.lastUpdated && user.lastUpdated >= cacheDate) {
+        continue
+      }
+
+      let netWorth = user.points
+
+      for (let song of user.songs) {
+        if (song.song) {
+          let existingSong = await Song.findById(song.song)
+
+          // ! Bad
+          if (!existingSong) {
+            continue
+          }
+
+          if (updated.indexOf(existingSong.spotifyId) > -1) {
+            netWorth += existingSong.currentPrice
+          } else {
+            existingSong.currentPrice = 25
+            existingSong.lastUpdated = cacheDate
+            await existingSong.save()
+            netWorth += existingSong.currentPrice
+          }
+        }
+      }
+
+      user.netWorth = netWorth
+      user.lastupdated = cacheDate
+      await user.save()
+    }
+
+    if (!cache) {
+      cache = new Cache({
+        date: cacheDate,
+        playlist: playlistData,
+      })
+    } else {
+      cache.date = cacheDate
+      cache.playlist = playlistData
+    }
+
+    await cache.save()
 
     res.send(playlistData)
   } else {

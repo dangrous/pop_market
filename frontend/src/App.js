@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { initializeSongs } from './reducers/songReducer'
-import { trySpotifyUser, logoutUser } from './reducers/userReducer'
+import { loginUser, logoutUser } from './reducers/userReducer'
 import { useDispatch, useSelector } from 'react-redux'
 import SongList from './components/SongList'
 import Leaderboard from './components/Leaderboard'
@@ -12,10 +12,14 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeSongs())
-    dispatch(trySpotifyUser())
+    dispatch(loginUser())
   }, [dispatch])
 
+<<<<<<< HEAD
   const oauthRequestUrl = '/api/login/oauth'
+=======
+  const oauthRequestUrl = 'http://localhost:3001/api/users/oauth'
+>>>>>>> main
 
   const logout = () => {
     dispatch(logoutUser())
@@ -40,8 +44,8 @@ const App = () => {
       <div className='container-fluid'>
         <div className='row'>
           <div className='col'>
-            {user ? <UserProfile /> : null}
             <Leaderboard />
+            {user ? <UserProfile /> : null}
           </div>
           <div className='col-5'>
             <SongList />

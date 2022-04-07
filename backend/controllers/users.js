@@ -1,96 +1,116 @@
-const bcrypt = require('bcrypt')
-const Song = require('../models/song')
+const jwt = require('jsonwebtoken')
+const axios = require('axios')
+
 const usersRouter = require('express').Router()
+
 const User = require('../models/user')
-const Cache = require('../models/cache')
+
 const logger = require('../utils/logger')
+const config = require('../utils/config')
 
-usersRouter.post('/', async (request, response) => {
-  logger.info('hey a new user')
-
-  const body = request.body
-
-  const saltRounds = 10
-  const passwordHash = await bcrypt.hash(body.password, saltRounds)
-
-  const user = new User({
-    email: body.email,
-    points: 1000,
-    createDate: new Date(),
-    passwordHash,
-  })
-
-  const savedUser = await user.save()
-
-  response.json(savedUser)
+usersRouter.get('/oauth', (req, res) => {
+  res.redirect(
+    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fapi%2Fusers%2Fcallback`
+  )
 })
 
-usersRouter.post('/points', async (request, response) => {
-  logger.info(
-    'attempting to deduct',
-    request.body.amount,
-    'points from user:',
-    request.body.email
-  )
+usersRouter.post('/logout', async (req, res) => {
+  res.cookie('popMarketSession', null, {
+    httpOnly: true,
+    expires: new Date(0),
+  })
+  res.redirect('/')
+})
 
-  const body = request.body
+usersRouter.post('/login', async (req, res) => {
+  if (!req.cookies || !req.cookies.popMarketSession) {
+    res.send(null)
+  } else {
+    const decodedUser = jwt.verify(req.cookies.popMarketSession, config.SECRET)
 
-  const user = await User.findOne({ email: body.email })
+    if (!decodedUser.id) {
+      res.send(null)
+    }
 
-  if (!user) {
-    return response.status(401).json({
-      error: 'could not find the user',
+    const user = await User.findOne({
+      email: decodedUser.id,
+    }).populate({
+      path: 'songs',
+      populate: { path: 'song' },
     })
+
+    if (!user) {
+      res.send(null)
+    } else {
+      res.status(200).send(user)
+    }
+  }
+})
+
+usersRouter.get('/callback', async (req, res) => {
+  const code = req.query.code || null
+
+  const auth = Buffer.from(
+    `${config.CLIENT_ID}:${config.CLIENT_SECRET}`,
+    'utf8'
+  ).toString('base64')
+
+  const response = await axios
+    .post('https://accounts.spotify.com/api/token', null, {
+      params: {
+        code: code,
+        // ! This will need to not be hardcoded for deployment. Not quite sure how to do that.
+        redirect_uri: 'http://localhost:3001/api/users/callback',
+        grant_type: 'authorization_code',
+      },
+      headers: {
+        Authorization: `Basic ${auth}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    })
+    .catch((error) => {
+      logger.error(error)
+    })
+
+  const token = response.data.access_token
+
+  const user = await axios.get('https://api.spotify.com/v1/me', {
+    headers: {
+      Authorization: 'Bearer ' + token,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  const existingUser = await User.findOne({ email: user.data.id })
+
+  if (!existingUser) {
+    const newUser = new User({
+      email: user.data.id,
+      points: 1000,
+      createDate: new Date(),
+      display_name: user.data.display_name,
+      netWorth: 1000,
+    })
+
+    await newUser.save()
   }
 
-  user.points = user.points - 1
+  const userForToken = {
+    id: user.data.id,
+  }
 
-  user.save()
+  const userToken = jwt.sign(userForToken, config.SECRET)
 
-  response.status(200).send({
-    token: body.token,
-    email: user.email,
-    points: user.points,
-    portfolio: user.songs,
-    trades: user.trades,
+  res.cookie('popMarketSession', userToken, {
+    httpOnly: true,
+    maxAge: 30 * 24 * 60 * 60 * 1000,
   })
+  // ! This redirects to the built version which is not great for testing. How fix?
+  res.redirect('/')
 })
 
 usersRouter.get('/', async (request, response) => {
   const users = await User.find({})
-
-  const cache = await Cache.findOne({})
-
-  const cacheDate = cache ? cache.date : new Date()
-
-  for (let user of users) {
-    if (user.lastUpdated && user.lastUpdated >= cacheDate) {
-      continue
-    }
-
-    let netWorth = user.points
-
-    for (let song of user.songs) {
-      if (song.song) {
-        let existingSong = await Song.findById(song.song)
-
-        if (existingSong.lastUpdated && existingSong.lastUpdated >= cacheDate) {
-          netWorth += existingSong.currentPrice
-        } else {
-          // ! This can be cleaned up
-          existingSong.currentPrice = 25
-          existingSong.lastUpdated = cacheDate
-          await existingSong.save()
-          netWorth += 25
-        }
-      }
-    }
-    logger.info(netWorth)
-    user.netWorth = netWorth
-    logger.info(user.netWorth)
-    user.lastUpdated = cacheDate
-    await user.save()
-  }
 
   users.sort((a, b) => {
     return b.netWorth - a.netWorth

@@ -5,25 +5,63 @@ import userService from '../services/user'
 const OwnedSong = ({ song, sell }) => {
   const profit = song.song.currentPrice - song.purchasePrice
 
-  const percentage =
-    (song.song.currentPrice - song.purchasePrice) / song.purchasePrice
+  const percentage = profit / song.purchasePrice
+
+  let background = ''
+
+  if (profit > 0) {
+    background = ' bg-success'
+  }
+
+  if (profit < 0) {
+    background = ' bg-danger'
+  }
+
+  const songData = song.song.data
 
   return (
-    <li>
-      {song.song.title} by{' '}
-      {song.song.artist.map((artist, i, artists) => {
-        if (i !== artists.length - 1) {
-          return artist.name + ', '
-        } else {
-          return artist.name
-        }
-      })}
-      - Current Value: {song.song.currentPrice} - Purchased at:{' '}
-      {song.purchasePrice} - Profit: {profit} or{' '}
-      {percentage.toLocaleString('en-US', {
-        style: 'percent',
-      })}{' '}
-      <button onClick={sell}>Sell This Song</button>
+    <li className={'list-group-item d-flex' + background}>
+      <div className='col-xxl-auto fs-3 align-self-center'>
+        <img
+          src={songData.album.images[1].url}
+          alt={`Album cover art for "${songData.name}"`}
+          height={94}
+          className='me-3'
+        />
+      </div>
+      <div className='flex-grow-1 align-self-center'>
+        <strong>{songData.name}</strong>
+        <br />
+        <em>
+          {songData.artists.map((artist, i, artists) => {
+            if (i !== artists.length - 1) {
+              return artist.name + ', '
+            } else {
+              return artist.name
+            }
+          })}
+        </em>
+        <br />
+        Current Value: {song.song.currentPrice} - Purchased at:{' '}
+        {song.purchasePrice} - Profit: {profit} or{' '}
+        {percentage.toLocaleString('en-US', {
+          style: 'percent',
+        })}{' '}
+        <br />
+        <a
+          className='btn btn-sm btn-outline-dark'
+          target='_blank'
+          rel='noreferrer'
+          href={songData.external_urls.spotify}
+        >
+          Listen on Spotify
+        </a>
+      </div>
+      <div className='flex-shrink-0 align-self-center'>
+        <button className='btn btn-info btn-sm' onClick={sell}>
+          Sell This Song
+        </button>
+      </div>
     </li>
   )
 }
@@ -41,7 +79,6 @@ const UserProfile = () => {
 
     try {
       const updatedUser = await userService.sell(
-        user.token,
         song.song.spotifyId,
         song.song.currentPrice,
         user.email
@@ -52,18 +89,42 @@ const UserProfile = () => {
     }
   }
 
+  // ! Can probably consolidate these somehow.
+
   const portfolioValue = user.songs.reduce(
     (prev, song) => prev + song.song.currentPrice,
     0
   )
 
+  const portfolioProfit = user.songs.reduce(
+    (prev, song) => prev + (song.song.currentPrice - song.purchasePrice),
+    0
+  )
+
+  const portfolioPercent =
+    portfolioProfit /
+    user.songs.reduce((prev, song) => prev + song.purchasePrice, 0)
+
   return (
     <div>
-      <h3>{user.display_name}'s Profile</h3>
-      <div>Total Net Worth - {user.netWorth}</div>
-      <div>You have {user.points} points available to spend</div>
-      <h4>Your Portfolio - Worth {portfolioValue} Points</h4>
-      <ul>
+      <h2 className='display-5'>{user.display_name}'s Profile</h2>
+      <div>
+        Total Net Worth: <strong>{user.netWorth}</strong>
+      </div>
+      <div>
+        You have <strong>{user.points} points</strong> available to spend
+      </div>
+      <h3>
+        Your Portfolio{' '}
+        <small className='text-muted'>
+          (Worth {portfolioValue} Points - Profit: {portfolioProfit} or{' '}
+          {portfolioPercent.toLocaleString('en-US', {
+            style: 'percent',
+          })}
+          )
+        </small>
+      </h3>
+      <ul className='list-group'>
         {user.songs.map((song) => (
           <OwnedSong
             key={song.song.id}

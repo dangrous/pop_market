@@ -9,12 +9,7 @@ const SongList = () => {
   const buySong = async (songId, price) => {
     console.log('You are buying a song!', songId)
     try {
-      const updatedUser = await userService.buy(
-        user.token,
-        songId,
-        price,
-        user.email
-      )
+      const updatedUser = await userService.buy(songId, price, user.email)
       dispatch(setUser(updatedUser))
     } catch (exception) {
       console.log('something went wrong')
@@ -25,12 +20,7 @@ const SongList = () => {
   const sellSong = async (songId, price) => {
     console.log('You are selling a song!', songId)
     try {
-      const updatedUser = await userService.sell(
-        user.token,
-        songId,
-        price,
-        user.email
-      )
+      const updatedUser = await userService.sell(songId, price, user.email)
       dispatch(setUser(updatedUser))
     } catch (exception) {
       console.log('that didnt work right')
@@ -39,60 +29,85 @@ const SongList = () => {
 
   return (
     <div>
-      <h3>
-        Top 50 Songs on Spotify
-        <small className='text-muted'> (Updated Daily)</small>
-      </h3>
+      <div className='d-flex mt-1'>
+        <h2 className='flex-grow-1 align-self-center'>
+          Top 50 Songs on Spotify
+          <small className='text-muted'> (Updated Daily)</small>
+        </h2>
+        <a
+          className='btn btn-sm btn-outline-dark align-self-center'
+          target='_blank'
+          rel='noreferrer'
+          href={
+            'https://open.spotify.com/playlist/37i9dQZEVXbMDoHDwVN2tF?si=82ea55e8a9874e67'
+          }
+        >
+          Listen on Spotify
+        </a>
+      </div>
+
       <ul className='list-group'>
         {songs
           ? songs.map((song, i) => {
+              const songData = song.track
+
               return (
-                <li className='list-group-item ps-2' key={song.track.id}>
-                  <div className='row'>
-                    <div className='col-xxl-auto fs-3'>
-                      {i + 1}.
-                      <img
-                        src={song.track.album.images[1].url}
-                        alt={`Album cover art for "${song.track.name}"`}
-                        height={94}
-                        className='ms-1'
-                      />
-                    </div>
-                    <div className='col-9'>
-                      <strong>{song.track.name}</strong>
-                      <br />
-                      <em>
-                        {song.track.artists.map((artist, i, artists) => {
-                          if (i !== artists.length - 1) {
-                            return artist.name + ', '
-                          } else {
-                            return artist.name
-                          }
-                        })}
-                      </em>
-                      <br />
-                      {user ? (
-                        user.songs.findIndex(
-                          (holding) => holding.song.spotifyId === song.track.id
-                        ) === -1 ? (
-                          <button
-                            className='btn btn-primary btn-sm mt-2'
-                            onClick={() => buySong(song.track.id, 100 - i)}
-                            disabled={user.points - (100 - i) < 0}
-                          >
-                            BUY This Song for {100 - i} Points!
-                          </button>
-                        ) : (
-                          <button
-                            className='btn btn-info btn-sm mt-2'
-                            onClick={() => sellSong(song.track.id, 100 - i)}
-                          >
-                            SELL This Song for {100 - i} Points!
-                          </button>
-                        )
-                      ) : null}
-                    </div>
+                <li className='list-group-item d-flex' key={songData.id}>
+                  <div className='col-xxl-auto fs-3 align-self-center'>
+                    {i + 1}.
+                    <img
+                      src={songData.album.images[1].url}
+                      alt={`Album cover art for "${songData.name}"`}
+                      height={94}
+                      className='mx-3'
+                    />
                   </div>
+                  <div className='flex-grow-1 align-self-center'>
+                    <strong>{songData.name}</strong>
+                    <br />
+                    <em>
+                      {songData.artists.map((artist, i, artists) => {
+                        if (i !== artists.length - 1) {
+                          return artist.name + ', '
+                        } else {
+                          return artist.name
+                        }
+                      })}
+                    </em>
+                    <br />
+                    <a
+                      className='btn btn-sm btn-outline-dark'
+                      target='_blank'
+                      rel='noreferrer'
+                      href={songData.external_urls.spotify}
+                    >
+                      Listen on Spotify
+                    </a>
+                  </div>
+                  {user ? (
+                    user.songs.findIndex(
+                      (holding) => holding.song.spotifyId === songData.id
+                    ) === -1 ? (
+                      <div className='flex-shrink-0 align-self-center'>
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={() => buySong(songData.id, 100 - i)}
+                          disabled={user.points - (100 - i) < 0}
+                        >
+                          BUY This Song for {100 - i} Points!
+                        </button>
+                      </div>
+                    ) : (
+                      <div className='flex-shrink-0 align-self-center'>
+                        <button
+                          className='btn btn-info btn-sm mt-2'
+                          onClick={() => sellSong(songData.id, 100 - i)}
+                        >
+                          SELL This Song for {100 - i} Points!
+                        </button>
+                      </div>
+                    )
+                  ) : null}
                 </li>
               )
             })
