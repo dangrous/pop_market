@@ -10,7 +10,7 @@ const config = require('../utils/config')
 
 usersRouter.get('/oauth', (req, res) => {
   res.redirect(
-    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fapi%2Fusers%2Fcallback`
+    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Ffloating-earth-98213%2Fapi%2Fusers%2Fcallback`
   )
 })
 
@@ -60,7 +60,8 @@ usersRouter.get('/callback', async (req, res) => {
       params: {
         code: code,
         // ! This will need to not be hardcoded for deployment. Not quite sure how to do that.
-        redirect_uri: 'http://localhost:3001/api/users/callback',
+        redirect_uri:
+          'https://floating-earth-98213.herokuapp.com/api/users/callback',
         grant_type: 'authorization_code',
       },
       headers: {
