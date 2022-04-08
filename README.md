@@ -6,7 +6,7 @@
 
 This application makes use of [Spotify's API](https://developer.spotify.com/documentation/web-api/) for OAuth (the Authorization code flow) as well as for pulling the song lists and creating the links back to listen to the songs (using the simpler client credentials flow). It stores the encrypted user id as a cookie to allow for easy access without re-logging in.
 
-This project is built with React on the front end (styled with Bootstrap) and Node.js / Express on the back end. The data is stored in MongoDB, accessed via Mongoose. The front end was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is built with React / Redux on the front end (styled with Bootstrap) and Node.js / Express on the back end. The data is stored in MongoDB, accessed via Mongoose. The front end was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Live Link
 
