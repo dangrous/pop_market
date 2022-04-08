@@ -15,7 +15,7 @@ const App = () => {
     dispatch(loginUser())
   }, [dispatch])
 
-  const oauthRequestUrl = '/api/users/login'
+  const oauthRequestUrl = '/api/users/oauth'
 
   const logout = () => {
     dispatch(logoutUser())
