@@ -10,7 +10,7 @@ const config = require('../utils/config')
 
 usersRouter.get('/oauth', (req, res) => {
   res.redirect(
-    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Ffloating-earth-98213%2Fapi%2Fusers%2Fcallback`
+    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Ffloating-earth-98213.herokuapp.com%2Fapi%2Fusers%2Fcallback`
   )
 })
 
