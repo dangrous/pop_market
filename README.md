@@ -1,70 +1,25 @@
-# Getting Started with Create React App
+# Pop Market
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+**Pop Market** is an interface for betting on the success of songs in Spotify's Global Top 50 playlist. Players log in through Oauth via Spotify, and are able to buy or sell songs at prices determined by their place on the playlist. Spotify updates this playlist every day, so it ideally would become a daily routine. On first login, players are given 1000 points to spend. The top ten users by net worth (available points added to the value of songs in their portfolio) are shown for comparison.
 
-In the project directory, you can run:
+This application makes use of [Spotify's API](https://developer.spotify.com/documentation/web-api/) for OAuth (the Authorization code flow) as well as for pulling the song lists and creating the links back to listen to the songs (using the simpler client credentials flow). It stores the encrypted user id as a cookie to allow for easy access without re-logging in.
 
-### `npm start`
+This project is built with React on the front end (styled with Bootstrap) and Node.js / Express on the back end. The data is stored in MongoDB, accessed via Mongoose. The front end was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Live Link
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+A version of this application is running on Heroku [here](https://floating-earth-98213.herokuapp.com/).
 
-### `npm test`
+## To Run
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Run `npm install` in both the front end and back end directories.
 
-### `npm run build`
+You can either run the ends separately, using `npm start` in each directory, or you can build the front end into the back end using first `npm run build` and then `cp -r ../backend` in the `/frontend` directory. Then you'll be able to simply `npm start` in the `/backend` directory and be good to go!
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Note: the version here on Github is configured for localhost links and will need to be updated should you wish to deploy it elsewhere.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## License
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
