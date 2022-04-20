@@ -86,7 +86,6 @@ spotifyRouter.get('/', async (req, res) => {
       updated.push(currentSong.track.id)
     }
 
-    // TODO Go through users, update any remaining song prices.
     const users = await User.find({})
 
     for (let user of users) {
