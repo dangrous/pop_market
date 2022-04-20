@@ -9,9 +9,15 @@ const logger = require('../utils/logger')
 const config = require('../utils/config')
 
 usersRouter.get('/oauth', (req, res) => {
-  res.redirect(
-    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fapi%2Fusers%2Fcallback`
-  )
+  if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
+    res.redirect(
+      `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fapi%2Fusers%2Fcallback`
+    )
+  } else {
+    res.redirect(
+      `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Ffloating-earth-98213.herokuapp.com%2Fapi%2Fusers%2Fcallback`
+    )
+  }
 })
 
 usersRouter.post('/logout', async (req, res) => {
@@ -55,12 +61,20 @@ usersRouter.get('/callback', async (req, res) => {
     'utf8'
   ).toString('base64')
 
+  let redirectUri = ''
+
+  if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
+    redirectUri = 'http://localhost:3001/api/users/callback'
+  } else {
+    redirectUri =
+      'https://floating-earth-98213.herokuapp.com/api/users/callback'
+  }
+
   const response = await axios
     .post('https://accounts.spotify.com/api/token', null, {
       params: {
         code: code,
-        // ! This will need to not be hardcoded for deployment. Not quite sure how to do that.
-        redirect_uri: 'http://localhost:3001/api/users/callback',
+        redirect_uri: redirectUri,
         grant_type: 'authorization_code',
       },
       headers: {
@@ -105,8 +119,14 @@ usersRouter.get('/callback', async (req, res) => {
     httpOnly: true,
     maxAge: 30 * 24 * 60 * 60 * 1000,
   })
-  // ! This redirects to the built version which is not great for testing. How fix?
-  res.redirect('/')
+
+  if (config.NODE_ENV === 'nobuild') {
+    logger.info('sending them back to the non built version')
+    res.redirect('http://localhost:3000')
+  } else {
+    logger.info('refular route')
+    res.redirect('/')
+  }
 })
 
 usersRouter.get('/', async (request, response) => {

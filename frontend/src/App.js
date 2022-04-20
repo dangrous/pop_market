@@ -15,7 +15,12 @@ const App = () => {
     dispatch(loginUser())
   }, [dispatch])
 
-  const oauthRequestUrl = 'http://localhost:3001/api/users/oauth'
+  let oauthRequestUrl = '/api/users/oauth'
+
+  if (process.env.NODE_ENV && process.env.NODE_ENV === 'development') {
+    console.log('found the env, switching the link')
+    oauthRequestUrl = 'http://localhost:3001/api/users/oauth'
+  }
 
   const logout = () => {
     dispatch(logoutUser())
