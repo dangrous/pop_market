@@ -10,10 +10,13 @@ const CLIENT_ID = process.env.CLIENT_ID
 
 const CLIENT_SECRET = process.env.CLIENT_SECRET
 
+const NODE_ENV = process.env.NODE_ENV
+
 module.exports = {
   PORT,
   MONGODB_URI,
   SECRET,
   CLIENT_ID,
   CLIENT_SECRET,
+  NODE_ENV,
 }

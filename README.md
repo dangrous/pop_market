@@ -16,9 +16,9 @@ A version of this application is running on Heroku [here](https://floating-earth
 
 Run `npm install` in both the front end and back end directories.
 
-You can either run the ends separately, using `npm start` in each directory, or you can build the front end into the back end using first `npm run build` and then `cp -r ../backend` in the `/frontend` directory. Then you'll be able to simply `npm start` in the `/backend` directory and be good to go!
+You'll also want to update the `.env_dummy` file into a `.env` file using the appropriate values for your development environment.
 
-Note: the version here on Github is configured for localhost links and will need to be updated should you wish to deploy it elsewhere.
+You can either run the ends separately, using `npm start` in each directory, or you can build the front end into the back end using first `npm run build` and then `cp -r ../backend` in the `/frontend` directory. Then you'll be able to simply `npm start` in the `/backend` directory and be good to go!
 
 ## License
 
