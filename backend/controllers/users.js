@@ -8,6 +8,14 @@ const User = require('../models/user')
 const logger = require('../utils/logger')
 const config = require('../utils/config')
 
+usersRouter.get('/profile/:id', async (req, res) => {
+  const user = await User.findOne({ email: req.params.id })
+
+  logger.info(user)
+
+  res.json(user)
+})
+
 usersRouter.get('/oauth', (req, res) => {
   if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
     res.redirect(
