@@ -20,5 +20,10 @@ const sell = async (songId, price, email) => {
   return response.data
 }
 
-const userService = { buy, sell }
+const getProfile = async (email) => {
+  const response = await axios.get('/api/users/profile/' + email)
+  return response.data
+}
+
+const userService = { buy, sell, getProfile }
 export default userService

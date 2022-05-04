@@ -9,9 +9,10 @@ const logger = require('../utils/logger')
 const config = require('../utils/config')
 
 usersRouter.get('/profile/:id', async (req, res) => {
-  const user = await User.findOne({ email: req.params.id })
-
-  logger.info(user)
+  const user = await User.findOne({ email: req.params.id }).populate({
+    path: 'songs',
+    populate: { path: 'song' },
+  })
 
   res.json(user)
 })
