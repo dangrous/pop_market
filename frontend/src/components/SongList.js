@@ -113,7 +113,7 @@ const SongList = () => {
           })
         ) : (
           <div class='alert alert-info' role='alert'>
-            We're updating the song data for today - this might take up to 10
+            We're pulling the song data for today - this might take up to 10
             seconds, so please be patient!
           </div>
         )}
