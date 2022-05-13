@@ -47,7 +47,7 @@ const SongList = () => {
       </div>
 
       <ul className='list-group'>
-        {songs ? (
+        {songs.length !== 0 ? (
           songs.map((song, i) => {
             const songData = song.track
 
@@ -113,7 +113,8 @@ const SongList = () => {
           })
         ) : (
           <div class='alert alert-info' role='alert'>
-            We're loading the song list for today - this might take some time!
+            We're updating the song data for today - this might take up to 10
+            seconds, so please be patient!
           </div>
         )}
       </ul>
