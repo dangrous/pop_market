@@ -46,7 +46,7 @@ const App = () => {
         <div className='row'>
           <div className='col'>
             <Leaderboard />
-            {user ? <UserProfile /> : null}
+            <UserProfile />
           </div>
           <div className='col-5'>
             <SongList />

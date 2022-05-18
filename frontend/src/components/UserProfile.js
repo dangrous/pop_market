@@ -71,7 +71,15 @@ const UserProfile = () => {
   const dispatch = useDispatch()
 
   if (!user) {
-    return null
+    return (
+      <div>
+        <h2 className='display-5'>Getting Started</h2>
+        <div class='alert alert-info' role='alert'>
+          To get started, log in with Spotify (top right corner) to create your
+          profile and start building your portfolio!
+        </div>
+      </div>
+    )
   }
 
   const sellSong = async (song) => {
@@ -118,21 +126,30 @@ const UserProfile = () => {
         Your Portfolio{' '}
         <small className='text-muted'>
           (Worth {portfolioValue} Points - Profit: {portfolioProfit} or{' '}
-          {portfolioPercent.toLocaleString('en-US', {
-            style: 'percent',
-          })}
+          {portfolioPercent
+            ? portfolioPercent.toLocaleString('en-US', {
+                style: 'percent',
+              })
+            : '0%'}
           )
         </small>
       </h3>
-      <ul className='list-group'>
-        {user.songs.map((song) => (
-          <OwnedSong
-            key={song.song.id}
-            song={song}
-            sell={() => sellSong(song)}
-          />
-        ))}
-      </ul>
+      {user.songs.length > 0 ? (
+        <ul className='list-group'>
+          {user.songs.map((song) => (
+            <OwnedSong
+              key={song.song.id}
+              song={song}
+              sell={() => sellSong(song)}
+            />
+          ))}
+        </ul>
+      ) : (
+        <div class='alert alert-info' role='alert'>
+          You don't have any songs in your portfolio! Use the BUY buttons on the
+          song list to the right to start making your millions.
+        </div>
+      )}
     </div>
   )
 }
