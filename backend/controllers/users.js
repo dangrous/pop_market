@@ -1,50 +1,53 @@
-const jwt = require('jsonwebtoken')
-const axios = require('axios')
+const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
-const usersRouter = require('express').Router()
+const usersRouter = require('express').Router();
 
-const User = require('../models/user')
+const User = require('../models/user');
 
-const logger = require('../utils/logger')
-const config = require('../utils/config')
+const logger = require('../utils/logger');
+const config = require('../utils/config');
 
 usersRouter.get('/profile/:id', async (req, res) => {
   const user = await User.findOne({ email: req.params.id }).populate({
     path: 'songs',
     populate: { path: 'song' },
-  })
+  });
 
-  res.json(user)
-})
+  res.json(user);
+});
 
 usersRouter.get('/oauth', (req, res) => {
-  if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
-    res.redirect(
-      `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fapi%2Fusers%2Fcallback`
-    )
-  } else {
-    res.redirect(
-      `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Ffloating-earth-98213.herokuapp.com%2Fapi%2Fusers%2Fcallback`
-    )
-  }
-})
+  // if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
+  //   res.redirect(
+  //     `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fapi%2Fusers%2Fcallback`
+  //   );
+  // } else {
+  //   res.redirect(
+  //     `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Ffloating-earth-98213.herokuapp.com%2Fapi%2Fusers%2Fcallback`
+  //   );
+  // }
+  res.redirect(
+    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Fpop-market.herokuapp.com%2Fapi%2Fusers%2Fcallback`
+  );
+});
 
 usersRouter.post('/logout', async (req, res) => {
   res.cookie('popMarketSession', null, {
     httpOnly: true,
     expires: new Date(0),
-  })
-  res.redirect('/')
-})
+  });
+  res.redirect('/');
+});
 
 usersRouter.post('/login', async (req, res) => {
   if (!req.cookies || !req.cookies.popMarketSession) {
-    res.send(null)
+    res.send(null);
   } else {
-    const decodedUser = jwt.verify(req.cookies.popMarketSession, config.SECRET)
+    const decodedUser = jwt.verify(req.cookies.popMarketSession, config.SECRET);
 
     if (!decodedUser.id) {
-      res.send(null)
+      res.send(null);
     }
 
     const user = await User.findOne({
@@ -52,32 +55,32 @@ usersRouter.post('/login', async (req, res) => {
     }).populate({
       path: 'songs',
       populate: { path: 'song' },
-    })
+    });
 
     if (!user) {
-      res.send(null)
+      res.send(null);
     } else {
-      res.status(200).send(user)
+      res.status(200).send(user);
     }
   }
-})
+});
 
 usersRouter.get('/callback', async (req, res) => {
-  const code = req.query.code || null
+  const code = req.query.code || null;
 
   const auth = Buffer.from(
     `${config.CLIENT_ID}:${config.CLIENT_SECRET}`,
     'utf8'
-  ).toString('base64')
+  ).toString('base64');
 
-  let redirectUri = ''
+  let redirectUri = 'https://pop-market.herokuapp.com/api/users/callback';
 
-  if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
-    redirectUri = 'http://localhost:3001/api/users/callback'
-  } else {
-    redirectUri =
-      'https://floating-earth-98213.herokuapp.com/api/users/callback'
-  }
+  // if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
+  //   redirectUri = 'http://localhost:3001/api/users/callback'
+  // } else {
+  //   redirectUri =
+  //     'https://floating-earth-98213.herokuapp.com/api/users/callback'
+  // }
 
   const response = await axios
     .post('https://accounts.spotify.com/api/token', null, {
@@ -92,19 +95,19 @@ usersRouter.get('/callback', async (req, res) => {
       },
     })
     .catch((error) => {
-      logger.error(error)
-    })
+      logger.error(error);
+    });
 
-  const token = response.data.access_token
+  const token = response.data.access_token;
 
   const user = await axios.get('https://api.spotify.com/v1/me', {
     headers: {
       Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json',
     },
-  })
+  });
 
-  const existingUser = await User.findOne({ email: user.data.id })
+  const existingUser = await User.findOne({ email: user.data.id });
 
   if (!existingUser) {
     const newUser = new User({
@@ -113,39 +116,39 @@ usersRouter.get('/callback', async (req, res) => {
       createDate: new Date(),
       display_name: user.data.display_name,
       netWorth: 1000,
-    })
+    });
 
-    await newUser.save()
+    await newUser.save();
   }
 
   const userForToken = {
     id: user.data.id,
-  }
+  };
 
-  const userToken = jwt.sign(userForToken, config.SECRET)
+  const userToken = jwt.sign(userForToken, config.SECRET);
 
   res.cookie('popMarketSession', userToken, {
     httpOnly: true,
     maxAge: 30 * 24 * 60 * 60 * 1000,
-  })
+  });
 
   if (config.NODE_ENV === 'nobuild') {
-    logger.info('sending them back to the non built version')
-    res.redirect('http://localhost:3000')
+    logger.info('sending them back to the non built version');
+    res.redirect('http://localhost:3000');
   } else {
-    logger.info('refular route')
-    res.redirect('/')
+    logger.info('regular route');
+    res.redirect('/');
   }
-})
+});
 
 usersRouter.get('/', async (request, response) => {
-  const users = await User.find({})
+  const users = await User.find({});
 
   users.sort((a, b) => {
-    return b.netWorth - a.netWorth
-  })
+    return b.netWorth - a.netWorth;
+  });
 
-  response.json(users)
-})
+  response.json(users);
+});
 
-module.exports = usersRouter
+module.exports = usersRouter;
