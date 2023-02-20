@@ -18,18 +18,15 @@ usersRouter.get('/profile/:id', async (req, res) => {
 });
 
 usersRouter.get('/oauth', (req, res) => {
-  // if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
-  //   res.redirect(
-  //     `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fapi%2Fusers%2Fcallback`
-  //   );
-  // } else {
-  //   res.redirect(
-  //     `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Ffloating-earth-98213.herokuapp.com%2Fapi%2Fusers%2Fcallback`
-  //   );
-  // }
-  res.redirect(
-    `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Fpop-market.fly.dev%2Fapi%2Fusers%2Fcallback`
-  );
+  if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
+    res.redirect(
+      `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=http%3A%2F%2Flocalhost%3A3001%2Fapi%2Fusers%2Fcallback`
+    );
+  } else {
+    res.redirect(
+      `https://accounts.spotify.com/authorize?response_type=code&client_id=${config.CLIENT_ID}&redirect_uri=https%3A%2F%2Fpop-market.fly.dev%2Fapi%2Fusers%2Fcallback`
+    );
+  }
 });
 
 usersRouter.post('/logout', async (req, res) => {
@@ -73,14 +70,13 @@ usersRouter.get('/callback', async (req, res) => {
     'utf8'
   ).toString('base64');
 
-  let redirectUri = 'https://pop-market.fly.dev/api/users/callback';
+  let redirectUri;
 
-  // if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
-  //   redirectUri = 'http://localhost:3001/api/users/callback'
-  // } else {
-  //   redirectUri =
-  //     'https://floating-earth-98213.herokuapp.com/api/users/callback'
-  // }
+  if (config.NODE_ENV === 'development' || config.NODE_ENV === 'nobuild') {
+    redirectUri = 'http://localhost:3001/api/users/callback';
+  } else {
+    redirectUri = 'https://pop-market.fly.dev/api/users/callback';
+  }
 
   const response = await axios
     .post('https://accounts.spotify.com/api/token', null, {

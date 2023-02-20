@@ -1,30 +1,30 @@
-import { useEffect } from 'react'
-import { initializeSongs } from './reducers/songReducer'
-import { loginUser, logoutUser } from './reducers/userReducer'
-import { useDispatch, useSelector } from 'react-redux'
-import SongList from './components/SongList'
-import Leaderboard from './components/Leaderboard'
-import UserProfile from './components/UserProfile'
+import { useEffect } from 'react';
+import { initializeSongs } from './reducers/songReducer';
+import { loginUser, logoutUser } from './reducers/userReducer';
+import { useDispatch, useSelector } from 'react-redux';
+import SongList from './components/SongList';
+import Leaderboard from './components/Leaderboard';
+import UserProfile from './components/UserProfile';
 
 const App = () => {
-  const user = useSelector((state) => state.user)
-  const dispatch = useDispatch()
+  const user = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(initializeSongs())
-    dispatch(loginUser())
-  }, [dispatch])
+    dispatch(initializeSongs());
+    dispatch(loginUser());
+  }, [dispatch]);
 
-  let oauthRequestUrl = '/api/users/oauth'
+  let oauthRequestUrl = '/api/users/oauth';
 
-  if (process.env.NODE_ENV && process.env.NODE_ENV === 'development') {
-    console.log('found the env, switching the link')
-    oauthRequestUrl = 'http://localhost:3001/api/users/oauth'
-  }
+  // if (process.env.NODE_ENV && process.env.NODE_ENV === 'development') {
+  //   console.log('found the env, switching the link')
+  //   oauthRequestUrl = 'http://localhost:3001/api/users/oauth'
+  // }
 
   const logout = () => {
-    dispatch(logoutUser())
-  }
+    dispatch(logoutUser());
+  };
 
   return (
     <>
@@ -54,7 +54,7 @@ const App = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;
